@@ -1,0 +1,136 @@
+<div class="fournisseur-container">
+    <h1>Gestion des Fournisseurs</h1>
+  
+    <!-- Formulaire pour ajouter un fournisseur -->
+    <div class="add-fournisseur">
+        <h2>Ajouter un Fournisseur</h2>
+        <form (ngSubmit)="addFournisseur()">
+            <label for="nom">Nom :</label>
+            <input
+                type="text"
+                id="nom"
+                [(ngModel)]="newFournisseur.nom"
+                name="nom"
+                required
+                placeholder="Nom du fournisseur"
+            />
+  
+            <label for="email">Email :</label>
+            <input
+                type="email"
+                id="email"
+                [(ngModel)]="newFournisseur.email"
+                name="email"
+                required
+                placeholder="Email du fournisseur"
+            />
+            <label for="address">Adresse :</label>
+            <input
+                type="text"
+                id="address"
+                [(ngModel)]="newFournisseur.adresse"
+                name="adresse"
+                required
+                placeholder="Adresse du fournisseur"
+            />
+            <label for="phone">Telephone :</label>
+            <input
+                type="number"
+                id="phone"
+                [(ngModel)]="newFournisseur.telephone"
+                name="phone"
+                required
+                placeholder="téléphone du fournisseur"
+            />
+  
+            <button type="submit">Ajouter</button>
+        </form>
+    </div>
+  
+    <!-- Filtrage des fournisseurs par nom -->
+    <div class="filter">
+        <h2>Filtrer par Nom</h2>
+        <input
+            type="text"
+            [(ngModel)]="filterName"
+            (ngModelChange)="filterFournisseurs()"
+            placeholder="Nom du fournisseur"
+        />
+    </div>
+  
+    <!-- Liste des fournisseurs -->
+    <div *ngIf="fournisseurs.length > 0">
+        <h2>Liste des Fournisseurs</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Adresse</th>
+                    <th>Téléphone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let fournisseur of filteredFournisseurs">
+                    <td>{{ fournisseur.id }}</td>
+                    <td>{{ fournisseur.nom }}</td>
+                    <td>{{ fournisseur.email }}</td>
+                    <td>{{ fournisseur.adresse }}</td>
+                    <td>{{ fournisseur.telephone }}</td>
+                    <td>
+                        <!-- Actions pour supprimer et modifier -->
+                        <button (click)="deleteFournisseur(fournisseur.id)">Supprimer</button>
+                        <button (click)="editFournisseur(fournisseur)">Modifier</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- Formulaire de mise à jour -->
+    <div *ngIf="selectedFournisseur" class="update-form">
+        <h2>Modifier Fournisseur</h2>
+        <form (ngSubmit)="updateFournisseur(selectedFournisseur.id, updateData)">
+            <label for="nom">Nom :</label>
+            <input
+                type="text"
+                id="nom"
+                [(ngModel)]="updateData.nom"
+                name="nom"
+                required
+                placeholder="Nom du fournisseur"
+            />
+  
+            <label for="email">Email :</label>
+            <input
+                type="email"
+                id="email"
+                [(ngModel)]="updateData.email"
+                name="email"
+                required
+                placeholder="Email du fournisseur"
+            />
+            <label for="adresse">Adresse :</label>
+            <input
+                type="text"
+                id="adresse"
+                [(ngModel)]="updateData.adresse"
+                name="adresse"
+                required
+                placeholder="Adresse du fournisseur"
+            />
+            <label for="email">Email :</label>
+            <input
+                type="phone"
+                id="phone"
+                [(ngModel)]="updateData.telephone"
+                name="phone"
+                required
+                placeholder="Telephone du fournisseur"
+            />
+  
+            <button type="submit">Modifier</button>
+        </form>
+    </div>
+</div>

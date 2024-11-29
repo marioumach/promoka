@@ -1,79 +1,101 @@
+/* Toolbar styling */
 .toolbar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #13144d;
+  color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Angular logo */
+.angular-logo {
+  max-width: 100px;
+}
+
+/* Menu toggle button */
+.menu-toggle {
+  display: none; /* Hidden by default */
+  font-size: 1.8rem;
+  color: white;
+  cursor: pointer;
+}
+
+
+.toolbar-content{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.nav-link {
+  text-decoration: none;
+  color: white;
+  font-size: 1.1em;
+  font-weight: bold;
+  transition: color 0.3s;
+  cursor: pointer;
+}
+.content-container {
+  padding: 30px;
+}
+/* Logout icon */
+.social-icons ,.basic-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.social-icons-resp , .resp-nav{
+  display: none;
+  
+}
+.spacer {
+  flex-grow: 1;
+}
+svg {
+  fill: white;
+  width: 24px;
+  height: 24px;
+  transition: fill 0.3s;
+}
+.social-icons a:hover svg {
+  fill: #ffa500;
+}
+/* Adjustments for responsive screens */
+@media (max-width: 768px) {
+  /* Show menu toggle and adjust layout */
+  .social-icons-resp {
+    margin-left: 1rem;
+    display: block;
+  }
+  .social-icons , .basic-nav{
+    display: none;
+  }
+  .menu-toggle {
+    display: block;
+    margin-left: auto; /* Push it to the right */
+  }
+
+
+
+  .resp-nav.active {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 30px;
-    background-color: #13144d;
-    color: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    flex-direction: column; /* Show navbar when active */
   }
 
-  .angular-logo {
-    margin-right: 10px;
+
+  /* Align logo, toggle button, and logout on the same line */
+  .toolbar {
+    flex-wrap: nowrap; /* Ensure single-line layout */
   }
 
-  .toolbar-title {
-    font-size: 1.5em;
-    font-weight: bold;
+  .social-icons {
+    margin-left: 10px;
   }
-
-  .navbar {
-    display: flex;
-    gap: 20px;
-  }
-
-  .nav-link {
-    text-decoration: none;
-    color: white;
-    font-size: 1.1em;
-    font-weight: bold;
-    transition: color 0.3s;
-    cursor: pointer;
-  }
-
-  .nav-link:hover {
-    color: #6af15c;
-  }
-
-  .spacer {
-    flex-grow: 1;
-  }
-
-  .social-icons a {
-    margin-left: 20px;
-  }
-
-  .social-icons svg {
-    fill: white;
-    width: 24px;
-    height: 24px;
-    transition: fill 0.3s;
-  }
-
-  .social-icons a:hover svg {
-    fill: #ffa500;
-  }
-
-  .content-container {
-    padding: 30px;
-  }
-
-  @media (max-width: 768px) {
-    .toolbar {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .navbar {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 15px;
-    }
-
-    .social-icons {
-      display: flex;
-      justify-content: flex-start;
-      gap: 15px;
-      margin-top: 10px;
-    }
-  }
+}

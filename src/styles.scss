@@ -1,1 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+.table-container {
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+  }

@@ -15,6 +15,7 @@
     <!-- Afficher les produits du fournisseur sélectionné -->
     <div *ngIf="selectedFournisseur" class="products-list">
       <h2>Produits de {{ selectedFournisseur.nom }}</h2>
+      <div class="table-container">
       <table>
         <thead>
           <tr>
@@ -46,7 +47,7 @@
           </tr>
         </tbody>
       </table>
-    </div>
+    </div></div>
   
     <!-- Afficher la liste des produits sélectionnés -->
     <div *ngIf="selectedProducts.length > 0" class="selected-products">
@@ -77,6 +78,7 @@
     <!-- Afficher toutes les commandes sauvegardées -->
     <div *ngIf="savedCommands.length > 0" class="saved-commands">
       <h2>Commandes Sauvegardées</h2>
+      <div class="table-container">
       <table>
         <thead>
           <tr>
@@ -97,7 +99,7 @@
             </td>
           </tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
   
    <!-- Détails du fournisseur -->
@@ -110,6 +112,7 @@
   
     <div class="product-list">
       <h4 class="section-subtitle">Produits dans cette Commande:</h4>
+      <div class="table-container">
       <table class="product-table">
         <thead>
           <tr>
@@ -148,12 +151,13 @@
             </td>
           </tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
   
     <!-- Available products from the fournisseur that are not in the command -->
     <div *ngIf="selectedCommand.isEditing && availableProducts.length > 0" class="add-new-products">
       <h4 class="section-subtitle">Ajouter de nouveaux produits</h4>
+      <div class="table-container">
       <table class="product-table">
         <thead>
           <tr>
@@ -189,7 +193,7 @@
             </td>
           </tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
   
     <div class="edit-buttons">

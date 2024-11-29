@@ -11,6 +11,10 @@ export class HomeComponent {
   constructor(private authService : AuthService,private router : Router){
 
   }
+  toggleNavbar() {
+    const navbar = document.querySelector('.resp-nav');
+    navbar?.classList.toggle('active');
+  }
   logout(){
     this.authService.logout().then(() => {
       // Clear token and user info from localStorage on logout

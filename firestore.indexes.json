@@ -1,4 +1,12 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionId": "produits",
+      "fields": [
+        { "fieldPath": "fournisseur", "order": "ASCENDING" },
+        { "fieldPath": "prix", "order": "DESCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

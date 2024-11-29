@@ -35,7 +35,7 @@ export class CommandeComponent {
     let id = e.target.value
     console.log(this.fournisseurs[0].id, id);
 
-    this.selectedFournisseur = this.fournisseurs.find(f => parseInt(f.id) === parseInt(id));
+    this.selectedFournisseur = this.fournisseurs.find(f => (f.id) === (id));
     console.log(this.selectedFournisseur);
 
     this.produitService.getProduitsByFournisseur(id).then(data => {
@@ -157,10 +157,10 @@ export class CommandeComponent {
     this.selectedCommand.totalAmount = totalAmount; // Update the totalAmount field in the selected command
   }
   updateCommand() {
-    this.commandeService.updateCommand(this.selectedCommand).then(
+    this.commandeService.updateCommand(this.selectedCommand.id,this.selectedCommand).then(
       (updatedCommand: any) => {
         // Update the local list of commands after successful save
-        const index = this.savedCommands.findIndex(cmd => parseInt(cmd.id) === parseInt(updatedCommand.id));
+        const index = this.savedCommands.findIndex(cmd => (cmd.id) === (updatedCommand.id));
         this.savedCommands[index] = updatedCommand;
         this.selectedCommand = null; // Deselect the command after saving
         alert('Commande mise à jour avec succès');

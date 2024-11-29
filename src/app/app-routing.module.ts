@@ -4,14 +4,17 @@ import { ProduitComponent } from './produit/produit.component';
 import { FournisseurComponent } from './fournisseur/fournisseur.component';
 import { HomeComponent } from './home/home.component';
 import { CommandeComponent } from './commande/commande.component';
+import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' }, // Redirection par défaut
-  { path: 'home', component: HomeComponent },
-  { path: 'produits', component: ProduitComponent },
-  { path: 'fournisseurs', component: FournisseurComponent },
-  { path: 'commandes', component: CommandeComponent },
-  { path: '**', redirectTo: '/home' }, // Gère les routes non reconnues
+  { path: 'login', component: LoginComponent },
+  { path: '', component: HomeComponent , children :[
+    { path: 'produits', component: ProduitComponent  },
+    { path: 'produits', component: ProduitComponent  },
+    { path: 'fournisseurs', component: FournisseurComponent  },
+    { path: 'commandes', component: CommandeComponent  },
+  ] },
+  { path: '**', redirectTo: '/login' }, // Gère les routes non reconnues
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

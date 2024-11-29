@@ -1,32 +1,45 @@
 import { Injectable } from '@angular/core';
-import { Observable, lastValueFrom, map } from 'rxjs';
-import { Fournisseur } from '../models/fournisseur.model';
-import { HttpClient } from '@angular/common/http';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { environment } from '../app.module';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FounisseurService {
-  private apiUrl = 'http://192.168.1.11:3000/fournisseurs';
+  private app;
+  private db;
 
-  constructor(private http: HttpClient) {}
-
-  // Charger les fournisseurs depuis le backend
-  chargerFournisseurs(): Promise<Fournisseur[]> {
-    return lastValueFrom(this.http.get<Fournisseur[]>(this.apiUrl));
+  constructor() {
+    // Initialize Firebase app
+    this.app = initializeApp(environment.firebase);
+    this.db = getFirestore(this.app); // Get Firestore instance
   }
 
-  // Ajouter un fournisseur
-  ajouterFournisseur(fournisseur: Fournisseur): Promise<Fournisseur> {
-    return lastValueFrom(this.http.post<Fournisseur>(this.apiUrl, fournisseur));
+  // Charger les fournisseurs depuis Firestore
+  async chargerFournisseurs(): Promise<any[]> {
+    const fournisseursCollection = collection(this.db, 'fournisseurs');
+    const fournisseurSnapshot = await getDocs(fournisseursCollection);
+    const fournisseursList = fournisseurSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return fournisseursList;
   }
 
-  // Supprimer un fournisseur
-  supprimerFournisseur(id: number): Promise<any> {
-    return lastValueFrom( this.http.delete(`${this.apiUrl}/${id}`));
+  // Ajouter un fournisseur dans Firestore
+  async ajouterFournisseur(fournisseur: any): Promise<any> {
+    const fournisseursCollection = collection(this.db, 'fournisseurs');
+    const docRef = await addDoc(fournisseursCollection, fournisseur);
+    return docRef.id;  // Return the newly created document's ID
   }
-    // Mettre à jour un fournisseur
-    modifierFournisseur(id: number, updatedData: Partial<Fournisseur>): Promise<Fournisseur> {
-      return lastValueFrom(this.http.patch<Fournisseur>(`${this.apiUrl}/${id}`, updatedData))
-    }
+
+  // Supprimer un fournisseur par ID de Firestore
+  async supprimerFournisseur(id: any): Promise<void> {
+    const fournisseurDoc = doc(this.db, 'fournisseurs', id);
+    await deleteDoc(fournisseurDoc);
+  }
+
+  // Mettre à jour un fournisseur dans Firestore
+  async modifierFournisseur(id: any, updatedData: Partial<any>): Promise<void> {
+    const fournisseurDoc = doc(this.db, 'fournisseurs', id);
+    await updateDoc(fournisseurDoc, updatedData);
+  }
 }

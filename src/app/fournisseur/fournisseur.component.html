@@ -81,7 +81,7 @@
                     <td>{{ fournisseur.telephone }}</td>
                     <td>
                         <!-- Actions pour supprimer et modifier -->
-                        <button (click)="deleteFournisseur(fournisseur.id)">Supprimer</button>
+                        <button (click)="deleteFournisseur(fournisseur.id!)">Supprimer</button>
                         <button (click)="editFournisseur(fournisseur)">Modifier</button>
                     </td>
                 </tr>
@@ -91,7 +91,7 @@
     <!-- Formulaire de mise à jour -->
     <div *ngIf="selectedFournisseur" class="update-form">
         <h2>Modifier Fournisseur</h2>
-        <form (ngSubmit)="updateFournisseur(selectedFournisseur.id, updateData)">
+        <form (ngSubmit)="updateFournisseur(selectedFournisseur.id!, updateData)">
             <label for="nom">Nom :</label>
             <input
                 type="text"

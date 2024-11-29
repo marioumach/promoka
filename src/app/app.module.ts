@@ -8,8 +8,11 @@ import { FournisseurComponent } from './fournisseur/fournisseur.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from "@angular/common/http";
 import { CommandeComponent } from './commande/commande.component';
-import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { LoginComponent } from './login/login.component';
+import { HomeComponent } from './home/home.component';
 export const environment = {
   production: false,
   firebase: {
@@ -24,20 +27,29 @@ export const environment = {
 };
 @NgModule({
   declarations: [
+    HomeComponent,
     AppComponent,
     ProduitComponent,
     FournisseurComponent,
-    CommandeComponent
+    CommandeComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    
-
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor() {
+    // Initialize Firebase
+    const app = initializeApp(environment.firebase);
+
+    // Initialize Firestore and Firebase Auth
+    const db = getFirestore(app); // Firestore
+    const auth = getAuth(app); // Firebase Authentication
+  }
+ }

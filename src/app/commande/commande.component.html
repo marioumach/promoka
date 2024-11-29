@@ -105,33 +105,50 @@
     <h3 class="section-title">Détails pour Fournisseur: {{ selectedCommand.fournisseur.nom }}</h3>
     
     <div class="detail">
-      <strong>Total Amount: </strong><span class="amount">{{ selectedCommand.totalAmount }} </span>
+      <strong>Montant Total : </strong><span class="amount">{{ selectedCommand.totalAmount }} </span>
     </div>
   
     <div class="product-list">
       <h4 class="section-subtitle">Produits dans cette Commande:</h4>
-      <div *ngFor="let product of selectedCommand.products; let i = index" class="product-item">
-        <div class="product-info">
-          <input 
-            (change)="updateTotalAmount()"
-            [(ngModel)]="product.quantity" 
-            type="number" 
-            min="1" 
-            [readonly]="!selectedCommand.isEditing" 
-            placeholder="Quantité" 
-            class="quantity-input"
-          />
-          <span class="product-name">{{ product.nom }}</span>
-          <button 
-            *ngIf="selectedCommand.isEditing" 
-            (click)="removeProduct(i)" 
-            class="delete-btn"
-            title="Supprimer ce produit"
-          >
-            Supprimer
-          </button>
-        </div>
-      </div>
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th>Quantité</th>
+            <th>Nom du Produit</th>
+            <th>Prix d'achat</th>
+            <th *ngIf="selectedCommand.isEditing">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of selectedCommand.products; let i = index">
+            <td>
+              <input 
+                (change)="updateTotalAmount()"
+                [(ngModel)]="product.quantity" 
+                type="number" 
+                min="1" 
+                [readonly]="!selectedCommand.isEditing" 
+                placeholder="Quantité" 
+                class="quantity-input"
+              />
+            </td>
+            <td>
+              <span class="product-name">{{ product.nom }}</span>
+            </td>            <td>
+              <span class="product-name">{{ product.prixAchat }}</span>
+            </td>
+            <td *ngIf="selectedCommand.isEditing">
+              <button 
+                (click)="removeProduct(i)" 
+                class="delete-btn"
+                title="Supprimer ce produit"
+              >
+                Supprimer
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   
     <!-- Available products from the fournisseur that are not in the command -->

@@ -10,7 +10,7 @@ import { FounisseurService } from '../services/founisseur.service';
 export class FournisseurComponent {
   fournisseurs: Fournisseur[] = [];
   filteredFournisseurs: Fournisseur[] = [];
-  newFournisseur: Fournisseur = { id: 0, nom: '', email: '', adresse: '', telephone: '' };
+  newFournisseur: Fournisseur = {  nom: '', email: '', adresse: '', telephone: '' };
   updateData: Partial<Fournisseur> = {};  // Données à mettre à jour
   selectedFournisseur: Fournisseur | null = null;
   filterName: string = '';  // Filtrage par nom
@@ -33,7 +33,7 @@ export class FournisseurComponent {
     if (this.newFournisseur.nom && this.newFournisseur.email) {
       this.fournisseurService.ajouterFournisseur(this.newFournisseur).finally(() => {
        this.getFournisseurs()
-        this.newFournisseur = { id: 0, nom: '', email: '', adresse: '', telephone: '' };  // Réinitialiser le formulaire
+        this.newFournisseur = {  nom: '', email: '', adresse: '', telephone: '' };  // Réinitialiser le formulaire
       });
     }
   }
@@ -57,6 +57,8 @@ export class FournisseurComponent {
   updateFournisseur(id: number, updatedData: Partial<Fournisseur>): void {
     this.fournisseurService.modifierFournisseur(id, updatedData).finally(() => {
       this.getFournisseurs()
+      this.selectedFournisseur=null
+      this.updateData={}
     });
   }
 

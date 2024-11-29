@@ -6,13 +6,17 @@ import { AppComponent } from './app.component';
 import { ProduitComponent } from './produit/produit.component';
 import { FournisseurComponent } from './fournisseur/fournisseur.component';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { CommandeComponent } from './commande/commande.component';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { InterceptorService } from './services/interceptor.service';
+
 export const environment = {
   production: false,
   firebase: {
@@ -39,17 +43,17 @@ export const environment = {
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    NgxSpinnerModule.forRoot({type: 'ball-spin'}),
   ],
-  providers: [],
+  providers: [  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: InterceptorService,
+    multi: true,
+  },],
   bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor() {
-    // Initialize Firebase
-    const app = initializeApp(environment.firebase);
-
-    // Initialize Firestore and Firebase Auth
-    const db = getFirestore(app); // Firestore
-    const auth = getAuth(app); // Firebase Authentication
   }
  }

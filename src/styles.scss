@@ -1,6 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+@import "../node_modules/ngx-spinner/animations/ball-spin";
+
 .table-container {
     overflow-y: auto; /* Enable vertical scrolling */
     overflow-x: auto; /* Enable horizontal scrolling if needed */
     border: 1px solid #ccc; /* Optional: Add a border for better visibility */
   }
+  

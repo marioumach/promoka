@@ -9,7 +9,7 @@ import { LoginComponent } from './login/login.component';
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: '', component: HomeComponent , children :[
-    { path: 'produits', component: ProduitComponent  },
+    { path: '', component: CommandeComponent  },
     { path: 'produits', component: ProduitComponent  },
     { path: 'fournisseurs', component: FournisseurComponent  },
     { path: 'commandes', component: CommandeComponent  },

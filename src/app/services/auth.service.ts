@@ -27,14 +27,7 @@ export class AuthService {
   }
 
   logout() {
-    signOut(this.auth).then(() => {
-      // Clear token and user info from localStorage on logout
-      localStorage.removeItem('userToken');
-      localStorage.removeItem('userEmail');
-      console.log('User logged out successfully');
-    }).catch((error) => {
-      console.error('Logout failed:', error);
-    });
+     return signOut(this.auth)
   }
 
   // Get current user info

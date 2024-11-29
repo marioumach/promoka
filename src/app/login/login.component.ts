@@ -28,7 +28,7 @@ export class LoginComponent {
         });
 
         // Navigate to the dashboard or homepage
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/']);
       })
       .catch((error) => {
         console.error('Login error:', error);

@@ -90,7 +90,7 @@
             </td>
       
             <!-- Display total price -->
-            <td>{{ product.quantity * product.prixAchat }}</td>
+            <td>{{ (product.quantity * product.prixAchat).toFixed(3) }}</td>
       
             <!-- Action buttons -->
             <td>
@@ -100,9 +100,11 @@
           </tr>
         </tbody>
       </table>
-  
-      <h3>Total: <span class="total-amount">{{ totalAmount }} </span></h3>
-  
+      <div class="row justify-content-between">
+      <h3 class="col-4">Total à payer: <span class="total-amount">{{ totalAmount.toFixed(3) }} </span></h3>
+      <h3 class="col-4">Nombre Produits: <span class="total-amount">{{ totalProduit }} </span></h3>
+      <h3 class="col-4">Nombre de cartons: <span class="total-amount">{{ totalCarton }} </span></h3>
+  </div>
       <!-- Bouton pour sauvegarder la commande -->
       <button class="save-btn" (click)="saveCommand()">Sauvegarder la Commande</button>
     </div>
@@ -115,7 +117,7 @@
         <thead>
           <tr>
             <th>Fournisseur</th>
-            <th>Produits</th>
+            <th>Nombre Produits</th>
             <th>Total</th>
             <th>Actions</th>
           </tr>
@@ -139,7 +141,16 @@
     <h3 class="section-title">Détails pour Fournisseur: {{ selectedCommand.fournisseur.nom }}</h3>
     
     <div class="detail">
-      <strong>Montant Total : </strong><span class="amount">{{ selectedCommand.totalAmount }} </span>
+      <strong>Montant Total :</strong>
+      <span class="amount">{{ selectedCommand.totalAmount }}</span>
+    </div>
+    <div class="detail">
+      <strong>Nombre de Produits :</strong>
+      <span class="amount">{{ totalProducts }}</span>
+    </div>
+    <div class="detail">
+      <strong>Nombre de Cartons :</strong>
+      <span class="amount">{{ totalCartons }}</span>
     </div>
   
     <div class="product-list">
@@ -148,14 +159,33 @@
       <table class="product-table">
         <thead>
           <tr>
-            <th>Quantité</th>
+            <th>
+              <input 
+                type="checkbox" 
+                [checked]="areAllSelected" 
+                (change)="toggleSelectAll($event)" 
+                title="Select All"
+              />
+            </th>
             <th>Nom du Produit</th>
+            <th>Quantité</th>
             <th>Prix d'achat</th>
+            <th>Sous Total</th>
             <th *ngIf="selectedCommand.isEditing">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let product of selectedCommand.products; let i = index">
+            <td>
+              <input 
+                type="checkbox" 
+                [(ngModel)]="product.isSelected" 
+                (change)="updateSelectionState()"
+              />
+            </td>
+            <td>
+              <span class="product-name">{{ product.nom }}</span>
+            </td>         
             <td>
               <input 
                 (change)="updateTotalAmount()"
@@ -166,11 +196,10 @@
                 placeholder="Quantité" 
                 class="quantity-input"
               />
-            </td>
-            <td>
-              <span class="product-name">{{ product.nom }}</span>
-            </td>            <td>
-              <span class="product-name">{{ product.prixAchat }}</span>
+            </td>   <td>
+              <span class="product-name">{{ product.prixAchat.toFixed(3) }}</span>
+            </td>    <td>
+              <span class="product-name">{{ (product.prixAchat*3).toFixed(3) }}</span>
             </td>
             <td *ngIf="selectedCommand.isEditing">
               <button 

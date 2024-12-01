@@ -3,6 +3,7 @@ import { ProduitService } from '../services/produit.service';
 import { CommandeService } from '../services/commande.service';
 import { Fournisseur } from '../models/fournisseur.model';
 import { ToastService } from '../toast.service';
+import { Produit } from '../models/produit.model';
 
 @Component({
   selector: 'app-commande',
@@ -15,6 +16,8 @@ export class CommandeComponent {
   selectedFournisseur: any = null;
   selectedProducts: any[] = [];
   totalAmount: number = 0;
+  totalProduit: number = 0;
+  totalCarton: number = 0;
   savedCommands: any[] = []; // Store all saved commands
   availableProducts: any[] = []; // Products available from the fournisseur
 
@@ -67,6 +70,9 @@ export class CommandeComponent {
     this.totalAmount = this.selectedProducts.reduce((total, product) => {
       return total + (product.quantity * product.prixAchat);
     }, 0);
+    this.totalProduit = this.selectedProducts.length
+    this.totalCarton =  this.selectedProducts.reduce( (sum: number, product: any) => sum + product.quantity, 0);
+
   }
   addProduct(product: any) {
     if (product.selectedQuantity > 0) {
@@ -92,6 +98,24 @@ export class CommandeComponent {
     this.toastService.showToast('Produit supprimé', 'success');
     this.calculateTotalAmount(); // Recalculate the total amount
   }
+  areAllSelected: boolean = false;
+
+toggleSelectAll(event: Event): void {
+  const isChecked = (event.target as HTMLInputElement).checked;
+  this.areAllSelected = isChecked;
+  this.selectedCommand.products.forEach((product:any) => product.isSelected = isChecked);
+}
+
+updateSelectionState(): void {
+  this.areAllSelected = this.selectedCommand.products.every((product:any) => product.isSelected);
+}
+
+get totalProducts(){
+  return this.selectedCommand.products.length
+}
+get totalCartons(){
+  return this.selectedCommand.products.reduce( (sum: number, product: any) => sum + product.quantity, 0);
+}
   // Save the order to the backend
   saveCommand() {
     const command = {
@@ -174,6 +198,7 @@ export class CommandeComponent {
       totalAmount += product.quantity * product.prixAchat; // Assuming each product has a prixAchat field
     });
     this.selectedCommand.totalAmount = totalAmount; // Update the totalAmount field in the selected command
+
   }
   updateCommand() {
     this.commandeService.updateCommand(this.selectedCommand.id,this.selectedCommand).then(

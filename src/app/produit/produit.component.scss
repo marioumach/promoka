@@ -120,7 +120,11 @@
   button:last-child:hover {
     background-color: #13144d;
   }
-  
+  .actions{
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+  }
 
   
   /* Responsive Styles */

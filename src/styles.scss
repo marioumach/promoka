@@ -17,3 +17,7 @@ html,body{
         height: 100%;
     }
 }
+.no-break{
+    white-space: nowrap;         /* Prevents line breaks within the text */
+    overflow: hidden;            /* Hides overflowed text */
+    text-overflow: ellipsis; }

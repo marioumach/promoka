@@ -69,7 +69,13 @@ export class ProduitComponent {
   editProduit(produit: any) {
     this.selectedProduit = produit;
     this.updateData = { ...produit };
-    
+    setTimeout(() => {
+      const updateProductDiv = document.getElementById('update-product');
+      if (updateProductDiv) {
+        updateProductDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 500);
+
   }
 
   updateProduit(id: number, data: any) {

@@ -135,9 +135,9 @@
         </thead>
         <tbody>
           <tr *ngFor="let produit of filteredProduits">
-            <td>{{ produit.nom_lowercase }}</td>
-            <td>{{ (produit.fournisseur|fournisseur:fournisseurs) }}</td>
-            <td>{{ produit.codeBarre }}</td>
+            <td class="no-break">{{ produit.nom_lowercase }}</td>
+            <td class="no-break">{{ (produit.fournisseur|fournisseur:fournisseurs) }}</td>
+            <td class="no-break">{{ produit.codeBarre }}</td>
             <td>{{ produit.quantite }}</td>
             <td>{{ produit.prixAchat}} </td>
             <td>{{ produit.prixVente}} </td>
@@ -154,7 +154,7 @@
     </div>
     
     <!-- Update form for selected product -->
-    <div *ngIf="selectedProduit" class="update-form">
+    <div *ngIf="selectedProduit" class="update-form" id="update-product">
       <h2>Modifier Produit</h2>
       <form (ngSubmit)="updateProduit(selectedProduit.id, updateData)">
         

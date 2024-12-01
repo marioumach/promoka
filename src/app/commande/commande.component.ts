@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ProduitService } from '../services/produit.service';
 import { CommandeService } from '../services/commande.service';
 import { Fournisseur } from '../models/fournisseur.model';
+import { ToastService } from '../toast.service';
 
 @Component({
   selector: 'app-commande',
@@ -17,7 +18,7 @@ export class CommandeComponent {
   savedCommands: any[] = []; // Store all saved commands
   availableProducts: any[] = []; // Products available from the fournisseur
 
-  constructor(private produitService: ProduitService, private commandeService: CommandeService) { }
+  constructor(private produitService: ProduitService, private commandeService: CommandeService, private toastService: ToastService) { }
 
   ngOnInit(): void {
     this.getFournisseurs(); // Load fournisseurs on component initialization
@@ -47,6 +48,8 @@ export class CommandeComponent {
 
   // Add a product to the command list
   addProductToCommand(product: any, quantity: number) {
+    this.toastService.showToast('Produit Ajouté!', 'success');
+
     const productInCommand = this.selectedProducts.find(p => p.id === product.id);
     if (productInCommand) {
       productInCommand.quantity = quantity;
@@ -67,12 +70,15 @@ export class CommandeComponent {
   }
   addProduct(product: any) {
     if (product.selectedQuantity > 0) {
+      this.toastService.showToast('Produit Ajouté!', 'success');
+
       const newProduct = {
         ...product,
         quantity: product.selectedQuantity,
       };
       this.selectedCommand.products.push(newProduct); // Add to the products list
       product.selectedQuantity = 0; // Reset the quantity input
+
       this.updateTotalAmount();
     } else {
       alert('Please enter a valid quantity.');
@@ -83,6 +89,7 @@ export class CommandeComponent {
   }
   deleteProduct(index: number): void {
     this.selectedProducts.splice(index, 1);
+    this.toastService.showToast('Produit supprimé', 'success');
     this.calculateTotalAmount(); // Recalculate the total amount
   }
   // Save the order to the backend
@@ -94,7 +101,8 @@ export class CommandeComponent {
     };
 
     this.commandeService.saveCommand(command).then(response => {
-      alert('Commande sauvegardée avec succès!');
+      this.toastService.showToast('Commande sauvegardée avec succès!', 'success');
+
       this.loadAllCommands(); // Reload the commands after saving a new one
       this.selectedFournisseur = null
       this.selectedProducts = []

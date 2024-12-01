@@ -5,18 +5,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ProduitComponent } from './produit/produit.component';
 import { FournisseurComponent } from './fournisseur/fournisseur.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { CommandeComponent } from './commande/commande.component';
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InterceptorService } from './services/interceptor.service';
 import { FournisseurPipe } from './pipes/fournisseur.pipe';
+import { ToastComponent } from './toast/toast.component';
 
 export const environment = {
   production: false,
@@ -38,17 +36,20 @@ export const environment = {
     FournisseurComponent,
     CommandeComponent,
     LoginComponent,
-    FournisseurPipe
+    FournisseurPipe,
+    ToastComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    ReactiveFormsModule, 
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
     NgxSpinnerModule.forRoot({type: 'ball-spin'}),
   ],
-  providers: [  {
+  providers: [  
+    {
     provide: HTTP_INTERCEPTORS,
     useClass: InterceptorService,
     multi: true,

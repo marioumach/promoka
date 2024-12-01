@@ -45,6 +45,18 @@
   .action-btn:hover {
     background-color: #45a049;
   }
+   .modif-btn {
+    border-radius: 8px;
+    background-color: #fcad37;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+
+  .modif-btn:hover {
+    background-color: #ffc400;
+  }
 
   .delete-btn {
     background-color: #f44336;

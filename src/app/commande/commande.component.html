@@ -50,10 +50,14 @@
             </td>
             <td>
               <button 
-                class="action-btn" 
-                (click)="addProductToCommand(product, product.quantity)">
-                Ajouter
-              </button>
+              [ngClass]="{
+                'action-btn': !productExistsInSelectedProducts(product),
+                'modif-btn': productExistsInSelectedProducts(product)
+              }"
+              [disabled]="!product.quantity || product.quantity <= 0"
+              (click)="addProductToCommand(product, product.quantity)">
+              {{ productExistsInSelectedProducts(product) ? 'Modifier' : 'Ajouter' }}
+            </button>
             </td>
           </tr>
         </tbody>
@@ -69,13 +73,30 @@
             <th>Nom</th>
             <th>Quantité</th>
             <th>Prix Total</th>
+            <th>Actions</th> <!-- Add an actions column for edit and delete buttons -->
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let product of selectedProducts">
+          <tr *ngFor="let product of selectedProducts; let i = index">
             <td>{{ product.nom }}</td>
-            <td>{{ product.quantity }}</td>
-            <td>{{ product.quantity * product.prixAchat }} </td>
+            
+            <!-- Editable quantity -->
+            <td>
+              <input 
+                type="number" 
+                [(ngModel)]="product.quantity" 
+                (ngModelChange)="updateQuantity(product, product.quantity)" 
+                [min]="1" />
+            </td>
+      
+            <!-- Display total price -->
+            <td>{{ product.quantity * product.prixAchat }}</td>
+      
+            <!-- Action buttons -->
+            <td>
+              <!-- Delete button -->
+              <button class="action-btn delete-btn" (click)="deleteProduct(i)">Delete</button>
+            </td>
           </tr>
         </tbody>
       </table>

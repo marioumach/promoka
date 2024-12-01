@@ -49,11 +49,14 @@ export class CommandeComponent {
   addProductToCommand(product: any, quantity: number) {
     const productInCommand = this.selectedProducts.find(p => p.id === product.id);
     if (productInCommand) {
-      productInCommand.quantity += quantity;
+      productInCommand.quantity = quantity;
     } else {
       this.selectedProducts.push({ ...product, quantity });
     }
     this.calculateTotalAmount(); // Recalculate the total amount
+  }
+  productExistsInSelectedProducts(product: any): boolean {
+    return this.selectedProducts.some(existingProduct => existingProduct.id === product.id);
   }
 
   // Calculate the total amount of the order
@@ -75,7 +78,13 @@ export class CommandeComponent {
       alert('Please enter a valid quantity.');
     }
   }
-
+  updateQuantity(product: any, quantity: number): void {
+    this.calculateTotalAmount(); // Recalculate the total amount
+  }
+  deleteProduct(index: number): void {
+    this.selectedProducts.splice(index, 1);
+    this.calculateTotalAmount(); // Recalculate the total amount
+  }
   // Save the order to the backend
   saveCommand() {
     const command = {

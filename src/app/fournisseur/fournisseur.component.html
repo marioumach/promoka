@@ -4,47 +4,55 @@
     <!-- Formulaire pour ajouter un fournisseur -->
     <div class="add-fournisseur">
         <h2>Ajouter un Fournisseur</h2>
-        <form (ngSubmit)="addFournisseur()">
+        <form [formGroup]="fournisseurForm" (ngSubmit)="addFournisseur()">
             <label for="nom">Nom :</label>
             <input
-                type="text"
-                id="nom"
-                [(ngModel)]="newFournisseur.nom"
-                name="nom"
-                required
-                placeholder="Nom du fournisseur"
+              type="text"
+              id="nom"
+              formControlName="nom"
+              placeholder="Nom du fournisseur"
             />
-  
+            <div class="input-error" *ngIf="fournisseurForm.get('nom')!.invalid && fournisseurForm.get('nom')!.touched">
+              <span *ngIf="fournisseurForm.get('nom')!.errors?.['required']">Nom est requis.</span>
+            </div>
+          
             <label for="email">Email :</label>
             <input
-                type="email"
-                id="email"
-                [(ngModel)]="newFournisseur.email"
-                name="email"
-                required
-                placeholder="Email du fournisseur"
+              type="email"
+              id="email"
+              formControlName="email"
+              placeholder="Email du fournisseur"
             />
+            <div  class="input-error" *ngIf="fournisseurForm.get('email')!.invalid && fournisseurForm.get('email')!.touched">
+              <span *ngIf="fournisseurForm.get('email')!.errors?.['required']">Email est requis.</span>
+              <span *ngIf="fournisseurForm.get('email')!.errors?.['email']">Email non valide.</span>
+            </div>
+          
             <label for="address">Adresse :</label>
             <input
-                type="text"
-                id="address"
-                [(ngModel)]="newFournisseur.adresse"
-                name="adresse"
-                required
-                placeholder="Adresse du fournisseur"
+              type="text"
+              id="address"
+              formControlName="adresse"
+              placeholder="Adresse du fournisseur"
             />
-            <label for="phone">Telephone :</label>
+            <div  class="input-error" *ngIf="fournisseurForm.get('adresse')!.invalid && fournisseurForm.get('adresse')!.touched">
+              <span *ngIf="fournisseurForm.get('adresse')!.errors?.['required']">Adresse est requise.</span>
+            </div>
+          
+            <label for="telephone">Téléphone :</label>
             <input
-                type="number"
-                id="phone"
-                [(ngModel)]="newFournisseur.telephone"
-                name="phone"
-                required
-                placeholder="téléphone du fournisseur"
+              type="number"
+              id="telephone"
+              formControlName="telephone"
+              placeholder="Téléphone du fournisseur"
             />
-  
+            <div  class="input-error" *ngIf="fournisseurForm.get('telephone')!.invalid && fournisseurForm.get('telephone')!.touched">
+              <span *ngIf="fournisseurForm.get('telephone')!.errors?.['required']">Téléphone est requis.</span>
+              <span *ngIf="fournisseurForm.get('telephone')!.errors?.['pattern']">Téléphone non valide.</span>
+            </div>
+          
             <button type="submit">Ajouter</button>
-        </form>
+          </form>
     </div>
   
     <!-- Filtrage des fournisseurs par nom -->

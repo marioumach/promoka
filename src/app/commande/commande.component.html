@@ -128,8 +128,12 @@
             <td>{{ command.products.length }}</td>
             <td>{{ command.totalAmount }} </td>
             <td>
+              <div class="fxRow fxAlignSpaceBetweenCenter">
               <button class="action-btn" (click)="viewDetails(command)">Mettre à jour</button>
               <button class=" delete-btn" (click)="deleteCommand(command.id)">Supprimer</button>
+              <button (click)="generatePDF(command)" class="btn btn-primary">
+                PDF
+              </button></div>
             </td>
           </tr>
         </tbody>

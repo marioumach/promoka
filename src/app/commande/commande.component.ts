@@ -4,6 +4,8 @@ import { CommandeService } from '../services/commande.service';
 import { Fournisseur } from '../models/fournisseur.model';
 import { ToastService } from '../toast.service';
 import { Produit } from '../models/produit.model';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-commande',
@@ -71,7 +73,7 @@ export class CommandeComponent {
       return total + (product.quantity * product.prixAchat);
     }, 0);
     this.totalProduit = this.selectedProducts.length
-    this.totalCarton =  this.selectedProducts.reduce( (sum: number, product: any) => sum + product.quantity, 0);
+    this.totalCarton = this.selectedProducts.reduce((sum: number, product: any) => sum + product.quantity, 0);
 
   }
   addProduct(product: any) {
@@ -100,22 +102,22 @@ export class CommandeComponent {
   }
   areAllSelected: boolean = false;
 
-toggleSelectAll(event: Event): void {
-  const isChecked = (event.target as HTMLInputElement).checked;
-  this.areAllSelected = isChecked;
-  this.selectedCommand.products.forEach((product:any) => product.isSelected = isChecked);
-}
+  toggleSelectAll(event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    this.areAllSelected = isChecked;
+    this.selectedCommand.products.forEach((product: any) => product.isSelected = isChecked);
+  }
 
-updateSelectionState(): void {
-  this.areAllSelected = this.selectedCommand.products.every((product:any) => product.isSelected);
-}
+  updateSelectionState(): void {
+    this.areAllSelected = this.selectedCommand.products.every((product: any) => product.isSelected);
+  }
 
-get totalProducts(){
-  return this.selectedCommand.products.length
-}
-get totalCartons(){
-  return this.selectedCommand.products.reduce( (sum: number, product: any) => sum + product.quantity, 0);
-}
+  get totalProducts() {
+    return this.selectedCommand.products.length
+  }
+  get totalCartons() {
+    return this.selectedCommand.products.reduce((sum: number, product: any) => sum + product.quantity, 0);
+  }
   // Save the order to the backend
   saveCommand() {
     const command = {
@@ -201,7 +203,7 @@ get totalCartons(){
 
   }
   updateCommand() {
-    this.commandeService.updateCommand(this.selectedCommand.id,this.selectedCommand).then(
+    this.commandeService.updateCommand(this.selectedCommand.id, this.selectedCommand).then(
       (updatedCommand: any) => {
         // Update the local list of commands after successful save
         const index = this.savedCommands.findIndex(cmd => (cmd.id) === (updatedCommand.id));
@@ -216,18 +218,81 @@ get totalCartons(){
       }
     );
   }
-  filterName =''
-  filteredProduits:any[]=[]
+  filterName = ''
+  filteredProduits: any[] = []
   filterProduits() {
     this.filteredProduits = this.produits.filter(produit => {
       // Find the fournisseur details using the fournisseur ID
       const fournisseur = this.fournisseurs.find(f => f.id === produit.fournisseur) as Fournisseur;
-  
+
       // Check if fournisseur exists and compare the filter with relevant fields
-      
-  
+
+
       return (
         (this.filterName === '' || produit.nom.toLowerCase().includes(this.filterName.toLowerCase())));
     });
+  }
+  generatePDF(command: any): void {
+    const doc = new jsPDF();
+
+    // Title - Centered
+    const title = 'Détails de la Commande';
+    doc.setFontSize(16);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const titleWidth = doc.getTextWidth(title);
+    const titleX = (pageWidth - titleWidth) / 2; // Center the title
+    doc.text(title, titleX, 20); // Centered title at Y = 20
+
+    // Date and Fournisseur Name on the Same Row
+    const currentDate = new Date().toLocaleDateString('fr-FR'); // Format date to DD/MM/YYYY
+    const fournisseurName = command.fournisseur.nom || 'Fournisseur Inconnu'; // Assuming fournisseur exists in the selectedCommand object
+    doc.setFontSize(12);
+
+    // Add Fournisseur Name to the Left
+    doc.text(`Fournisseur: ${fournisseurName}`, 14, 30); // Left-aligned at X = 14, Y = 30
+
+    // Add Date to the Right
+    doc.text(`Date: ${currentDate}`, pageWidth - 14, 30, { align: 'right' }); // Right-aligned at X = pageWidth - 14, Y = 30
+
+    // Products Table
+    const productData = command.products.map((product: any, index: number) => [
+      index + 1,
+      product.nom,
+      product.quantity,
+      product.prixAchat.toFixed(3),
+      (product.quantity * product.prixAchat).toFixed(3),
+    ]);
+
+    // Calculate totals
+    const totalCartons = command.products.reduce(
+      (sum: number, product: any) => sum + product.quantity,
+      0
+    );
+    const totalAmount = command.products.reduce(
+      (sum: number, product: any) => sum + product.quantity * product.prixAchat,
+      0
+    );
+
+    autoTable(doc, {
+      startY: 40,
+      head: [['#', 'Nom du Produit', 'Quantité', 'Prix Unitaire (Dt)', 'Sous-Total (Dt)']],
+      body: productData,
+      foot: [[
+        'Total',
+        command.products.length + ' produits', // Empty column for #
+       
+        totalCartons.toString()+ ' cartons',
+        '', // Empty column for Prix Unitaire
+        totalAmount.toFixed(3) + ' dinars', // Total sous-total
+      ]],
+      footStyles: {
+        fillColor: [220, 220, 220],
+        textColor:[0,0,0],
+        fontStyle: 'bold',
+      },
+    });
+
+    // Save PDF
+    doc.save(`commande-${command.id || new Date().toISOString()}.pdf`);
   }
 }

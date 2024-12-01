@@ -37,3 +37,11 @@ body {
 .input-error{
     color: red;
 }
+.fxRow{
+    display: flex;
+    flex-direction: row;
+}
+.fxAlignSpaceBetweenCenter{
+    justify-content: space-between;
+    align-items: center;
+}

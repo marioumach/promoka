@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ProduitService } from '../services/produit.service';
 import { CommandeService } from '../services/commande.service';
+import { Fournisseur } from '../models/fournisseur.model';
 
 @Component({
   selector: 'app-commande',
@@ -40,6 +41,7 @@ export class CommandeComponent {
 
     this.produitService.getProduitsByFournisseur(id).then(data => {
       this.produits = data;
+      this.filteredProduits = data
     });
   }
 
@@ -171,5 +173,19 @@ export class CommandeComponent {
         alert('Erreur lors de la mise à jour de la commande');
       }
     );
+  }
+  filterName =''
+  filteredProduits:any[]=[]
+  filterProduits() {
+    this.filteredProduits = this.produits.filter(produit => {
+      // Find the fournisseur details using the fournisseur ID
+      const fournisseur = this.fournisseurs.find(f => f.id === produit.fournisseur) as Fournisseur;
+  
+      // Check if fournisseur exists and compare the filter with relevant fields
+      
+  
+      return (
+        (this.filterName === '' || produit.nom.toLowerCase().includes(this.filterName.toLowerCase())));
+    });
   }
 }

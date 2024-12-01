@@ -15,6 +15,15 @@
     <!-- Afficher les produits du fournisseur sélectionné -->
     <div *ngIf="selectedFournisseur" class="products-list">
       <h2>Produits de {{ selectedFournisseur.nom }}</h2>
+      
+      <!-- Filter by product name -->
+      <input
+        type="text"
+        [(ngModel)]="filterName"
+        (keyup)="filterProduits()"
+        placeholder="Nom du produit"
+        class="input-field"
+      />
       <div class="table-container">
       <table>
         <thead>
@@ -27,9 +36,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let product of produits">
+          <tr *ngFor="let product of filteredProduits">
             <td>{{ product.nom }}</td>
-            <td>{{ product.prixAchat }} </td>
+            <td>{{ product.prixAchat.toFixed(3) }} </td>
             <td>{{ (product.prixAchat / product.quantite).toFixed(3)}} </td>
             <td>
               <input

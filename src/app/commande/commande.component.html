@@ -21,6 +21,7 @@
           <tr>
             <th>Nom</th>
             <th>Prix d'achat</th>
+            <th>Prix Achat / Piece</th>
             <th>Quantité</th>
             <th>Action</th>
           </tr>
@@ -29,6 +30,7 @@
           <tr *ngFor="let product of produits">
             <td>{{ product.nom }}</td>
             <td>{{ product.prixAchat }} </td>
+            <td>{{ (product.prixAchat / product.quantite).toFixed(3)}} </td>
             <td>
               <input
                 type="number"

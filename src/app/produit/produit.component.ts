@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ProduitService } from '../services/produit.service';
+import { Fournisseur } from '../models/fournisseur.model';
+import { QueryDocumentSnapshot } from 'firebase/firestore';
 
 @Component({
   selector: 'app-produit',
@@ -13,6 +15,9 @@ export class ProduitComponent {
   selectedProduit: any;
   updateData: any = {};
   filteredProduits: any[] = [];
+  pageSize = 10; // Taille de la page
+  lastDoc: any= null; // Dernier document pour pagination
+  hasMoreData: boolean = true; // Flag to track if more data is available
 
   constructor(private produitService: ProduitService) {}
 
@@ -21,21 +26,34 @@ export class ProduitComponent {
     this.getFournisseurs();
   }
 
-  getProduits() {
-    this.produitService.getProduits().then(data => {
-      this.produits = data;
-      this.filteredProduits = data;
-    });
-  }
 
+  async getProduits(): Promise<void> {
+    try {
+      const { produits, lastDoc } = await this.produitService.getProduits(this.pageSize, this.lastDoc);
+      this.produits = [...this.produits, ...produits]; // Ajouter les nouveaux produits à la liste existante
+      this.filteredProduits = [...this.produits]; // Mettre à jour les produits filtrés
+      this.lastDoc = lastDoc; // Mettre à jour le dernier document pour la pagination
+      console.log(produits , lastDoc);
+      this.hasMoreData = !!lastDoc;
+    } catch (error) {
+      console.error('Erreur lors du chargement des produits:', error);
+    }
+  }
   getFournisseurs() {
     this.produitService.getFournisseurs().then(data => {
       this.fournisseurs = data;
     });
   }
-
+  nextPage(): void {
+    this.getProduits(); // Charger la page suivante
+  }
   addProduit() {
+    this.newProduit.nom_lowercase = this.newProduit.nom.trim().toLowerCase();
+    this.newProduit.timestamp = new Date().getTime();
+    this.newProduit.lastupdate_timestamp =  this.newProduit.timestamp;
+
     this.produitService.addProduit(this.newProduit).finally(() => {
+      this.newProduit= {};
       this.getProduits();
     });
   }
@@ -51,10 +69,17 @@ export class ProduitComponent {
   editProduit(produit: any) {
     this.selectedProduit = produit;
     this.updateData = { ...produit };
+    
   }
 
   updateProduit(id: number, data: any) {
+    data.nom_lowercase = data.nom.trim().toLowerCase();
+    data.lastupdate_timestamp = new Date().getTime();
+    console.log('update Product ',data);
+    
     this.produitService.updateProduit(id, data).finally(() => {
+      console.log("updated Successfully");
+      
       this.getProduits();
       this.selectedProduit = null;
     });
@@ -64,16 +89,33 @@ export class ProduitComponent {
   filterFournisseur: string = '';
   filterCodeBarre: string = '';
   // Filtrer les produits en fonction des critères
+  async applyFilters(): Promise<void> {
+    try {
+      const filters = {
+        name: this.filterName,
+        codeBarre: this.filterCodeBarre,
+        fournisseur: this.filterFournisseur,
+      };
+
+      const { produits, lastDoc } = await this.produitService.getFilteredProduits(this.pageSize, this.lastDoc, filters);
+
+      this.filteredProduits = produits;
+      this.lastDoc = lastDoc;
+      this.hasMoreData = !!lastDoc;
+    } catch (error) {
+      console.error('Erreur lors de l\'application des filtres:', error);
+    }
+  }
   filterProduits() {
     this.filteredProduits = this.produits.filter(produit => {
       // Find the fournisseur details using the fournisseur ID
-      const fournisseur = this.fournisseurs.find(f => f.id === produit.fournisseur);
+      const fournisseur = this.fournisseurs.find(f => f.id === produit.fournisseur) as Fournisseur;
   
       // Check if fournisseur exists and compare the filter with relevant fields
       const isFournisseurMatch = this.filterFournisseur === '' || 
                                  (fournisseur && 
-                                  (fournisseur.name.toLowerCase().includes(this.filterFournisseur.toLowerCase()) ||
-                                   fournisseur.phone.includes(this.filterFournisseur)));
+                                  (fournisseur.nom.toLowerCase().includes(this.filterFournisseur.toLowerCase()) ||
+                                   (fournisseur.telephone.toString().includes(this.filterFournisseur))));
   
       return (
         (this.filterName === '' || produit.nom.toLowerCase().includes(this.filterName.toLowerCase())) &&

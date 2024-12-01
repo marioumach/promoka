@@ -93,7 +93,7 @@
       <input
         type="text"
         [(ngModel)]="filterName"
-        (ngModelChange)="filterProduits()"
+        (keyup)="applyFilters()"
         placeholder="Nom du produit"
         class="input-field"
       />
@@ -102,7 +102,7 @@
       <input
         type="text"
         [(ngModel)]="filterFournisseur"
-        (ngModelChange)="filterProduits()"
+        (keyup)="applyFilters()"
         placeholder="Fournisseur"
         class="input-field"
       />
@@ -111,7 +111,7 @@
       <input
         type="text"
         [(ngModel)]="filterCodeBarre"
-        (ngModelChange)="filterProduits()"
+        (keyup)="applyFilters()"
         placeholder="Code à barre"
         class="input-field"
       />
@@ -124,10 +124,10 @@
       <table class="product-table">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Libellé</th>
             <th>Fournisseur</th>
             <th>Code à barre</th>
+            <th>quantité</th>
             <th>Prix Achat</th>
             <th>Prix Vente</th>
             <th>Actions</th>
@@ -135,10 +135,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let produit of filteredProduits">
-            <td>{{ produit.id }}</td>
-            <td>{{ produit.nom || produit.nom }}</td>
-            <td>{{ produit.fournisseur.nom ||produit.fournisseur }}</td>
+            <td>{{ produit.nom_lowercase }}</td>
+            <td>{{ (produit.fournisseur|fournisseur:fournisseurs) }}</td>
             <td>{{ produit.codeBarre }}</td>
+            <td>{{ produit.quantite }}</td>
             <td>{{ produit.prixAchat}} </td>
             <td>{{ produit.prixVente}} </td>
             <td class="actions">
@@ -149,6 +149,8 @@
           </tr>
         </tbody>
       </table></div>
+      <button (click)="nextPage()" *ngIf="hasMoreData" [disabled]="!lastDoc">Charger Plus</button>
+
     </div>
     
     <!-- Update form for selected product -->
@@ -189,6 +191,16 @@
           name="codeBarre"
           required
           placeholder="Code à barre"
+          class="input-field"
+        />  
+              <label for="quantite">Quantité :</label>
+        <input
+          type="text"
+          id="quantite"
+          [(ngModel)]="updateData.quantite"
+          name="quantite"
+          required
+          placeholder="Quantité"
           class="input-field"
         />
     

@@ -16,6 +16,7 @@ import { HomeComponent } from './home/home.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InterceptorService } from './services/interceptor.service';
+import { FournisseurPipe } from './pipes/fournisseur.pipe';
 
 export const environment = {
   production: false,
@@ -36,7 +37,8 @@ export const environment = {
     ProduitComponent,
     FournisseurComponent,
     CommandeComponent,
-    LoginComponent
+    LoginComponent,
+    FournisseurPipe
   ],
   imports: [
     BrowserModule,

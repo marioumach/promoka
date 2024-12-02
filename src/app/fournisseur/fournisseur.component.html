@@ -73,7 +73,6 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Nom</th>
                     <th>Email</th>
                     <th>Adresse</th>
@@ -83,7 +82,6 @@
             </thead>
             <tbody>
                 <tr *ngFor="let fournisseur of filteredFournisseurs">
-                    <td>{{ fournisseur.id }}</td>
                     <td>{{ fournisseur.nom }}</td>
                     <td>{{ fournisseur.email }}</td>
                     <td>{{ fournisseur.adresse }}</td>

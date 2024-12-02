@@ -45,7 +45,7 @@ export class ProduitComponent {
     });
   }
   nextPage(): void {
-    this.getProduits(); // Charger la page suivante
+    this.filterName ?this.getProduits() : this.applyFilters(); // Charger la page suivante
   }
   addProduit() {
     this.newProduit.nom_lowercase = this.newProduit.nom.trim().toLowerCase();
@@ -114,7 +114,6 @@ export class ProduitComponent {
   }
   filterProduits() {
     this.filteredProduits = this.produits.filter(produit => {
-      // Find the fournisseur details using the fournisseur ID
       const fournisseur = this.fournisseurs.find(f => f.id === produit.fournisseur) as Fournisseur;
   
       // Check if fournisseur exists and compare the filter with relevant fields

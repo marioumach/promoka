@@ -15,6 +15,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InterceptorService } from './services/interceptor.service';
 import { FournisseurPipe } from './pipes/fournisseur.pipe';
 import { ToastComponent } from './toast/toast.component';
+import { FactureComponent } from './facture/facture.component';
+import { ClientComponent } from './client/client.component';
 
 export const environment = {
   production: false,
@@ -37,7 +39,9 @@ export const environment = {
     CommandeComponent,
     LoginComponent,
     FournisseurPipe,
-    ToastComponent
+    ToastComponent,
+    FactureComponent,
+    ClientComponent
   ],
   imports: [
     BrowserModule,

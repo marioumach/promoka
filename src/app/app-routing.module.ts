@@ -5,6 +5,8 @@ import { FournisseurComponent } from './fournisseur/fournisseur.component';
 import { HomeComponent } from './home/home.component';
 import { CommandeComponent } from './commande/commande.component';
 import { LoginComponent } from './login/login.component';
+import { FactureComponent } from './facture/facture.component';
+import { ClientComponent } from './client/client.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -13,6 +15,8 @@ const routes: Routes = [
     { path: 'produits', component: ProduitComponent  },
     { path: 'fournisseurs', component: FournisseurComponent  },
     { path: 'commandes', component: CommandeComponent  },
+    { path: 'factures', component: FactureComponent  },
+    { path: 'clients', component: ClientComponent  },
   ] },
   { path: '**', redirectTo: '/login' }, // Gère les routes non reconnues
 ];

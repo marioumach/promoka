@@ -62,7 +62,10 @@
           </tr>
         </tbody>
       </table>
-    </div></div>
+    </div>
+
+    
+  </div>
   
     <!-- Afficher la liste des produits sélectionnés -->
     <div *ngIf="selectedProducts.length > 0" class="selected-products">
@@ -126,7 +129,7 @@
           <tr *ngFor="let command of savedCommands">
             <td>{{ command.fournisseur.nom }}</td>
             <td>{{ command.products.length }}</td>
-            <td>{{ command.totalAmount }} </td>
+            <td>{{ command.totalAmount.toFixed(3)  }} </td>
             <td>
               <div class="fxRow fxAlignSpaceBetweenCenter">
               <button class="action-btn" (click)="viewDetails(command)">Mettre à jour</button>

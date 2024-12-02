@@ -1,0 +1,151 @@
+<div class="facture-container">
+    <h1>Gestion des Factures</h1>
+  
+    <!-- Formulaire pour ajouter une facture -->
+    <div class="add-facture">
+      <h2>Créer une Facture</h2>
+     
+    <!-- Sélectionner le client -->
+    <div class="client-selection">
+        <h2>Sélectionner un Client</h2>
+        <select (change)="onClientsSelected($event)">
+          <option value="">Choisir un client</option>
+          <option *ngFor="let client of clients" [value]="client.id">
+            {{ client.nom }}
+          </option>
+        </select>
+      </div>
+        <!-- Liste des produits -->
+         <!-- Filter by product name -->
+      <input
+      type="text"
+      [(ngModel)]="filterName"
+      (keyup)="filterProduits()"
+      placeholder="Nom du produit"
+      class="input-field"
+    />
+    <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prix d'achat</th>
+          <th>Prix Achat / Piece</th>
+          <th>Quantité</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of filteredProduits">
+          <td>{{ product.nom }}</td>
+          <td>{{ product.prixAchat.toFixed(3) }} </td>
+          <td>{{ (product.prixAchat / product.quantite).toFixed(3)}} </td>
+          <td>
+            <input
+              type="number"
+              [(ngModel)]="product.quantity"
+              min="1"
+              placeholder="Quantité"
+            />
+          </td>
+          <td>
+            <button 
+            [ngClass]="{
+              'action-btn': !productExistsInSelectedProducts(product),
+              'modif-btn': productExistsInSelectedProducts(product)
+            }"
+            [disabled]="!product.quantity || product.quantity <= 0"
+            (click)="addProductTofacture(product, product.quantity)">
+            {{ productExistsInSelectedProducts(product) ? 'Modifier' : 'Ajouter' }}
+          </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <button (click)="nextPage()" *ngIf="hasMoreData" [disabled]="!lastDoc">Charger Plus</button>
+
+        <!-- Totaux -->
+       
+    </div>
+    <!-- Afficher la liste des produits sélectionnés -->
+    <div *ngIf="selectedProducts.length > 0" class="selected-products">
+        <h2>Produits Sélectionnés</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Quantité</th>
+              <th>Prix Total</th>
+              <th>Actions</th> <!-- Add an actions column for edit and delete buttons -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of selectedProducts; let i = index">
+              <td>{{ product.nom }}</td>
+              
+              <!-- Editable quantity -->
+              <td>
+                <input 
+                  type="number" 
+                  [(ngModel)]="product.quantity" 
+                  (ngModelChange)="updateQuantity(product, product.quantity)" 
+                  [min]="1" />
+              </td>
+        
+              <!-- Display total price -->
+              <td>{{ (product.quantity * product.prixAchat).toFixed(3) }}</td>
+        
+              <!-- Action buttons -->
+              <td>
+                <!-- Delete button -->
+                <button class="action-btn delete-btn" (click)="deleteProduct(i)">supprimer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="row justify-content-between">
+            <h3 class="col-4">Droit de timbre: <span class="total-amount">{{ droit.toFixed(3) }} </span></h3>
+
+        <h3 class="col-4">Total à payer: <span class="total-amount">{{ totalAmount.toFixed(3) }} </span></h3>
+        <h3 class="col-4">Nombre Produits: <span class="total-amount">{{ totalProduit }} </span></h3>
+    </div>
+        <!-- Bouton pour sauvegarder la Facture -->
+        <button class="save-btn" (click)="saveFacture()">Sauvegarder la Facture</button>
+      </div>
+    <!-- Liste des factures -->
+    <div class="factures-liste" *ngIf="savedfactures.length > 0">
+         <!-- Afficher toutes les factures sauvegardées -->
+    <div *ngIf="savedfactures.length > 0" class="saved-factures">
+        <h2>factures Sauvegardées</h2>
+        <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>client</th>
+              <th>Nombre Produits</th>
+              <th>Total</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let facture of savedfactures">
+              <td>{{ facture.client.nom }}</td>
+              <td>{{ facture.products.length }}</td>
+              <td>{{ facture.totalAmount.toFixed(3)  }} </td>
+              <td>
+                <div class="fxRow fxAlignSpaceBetweenCenter">
+                <button class="action-btn" (click)="viewDetails(facture)">Mettre à jour</button>
+                <button class=" delete-btn" (click)="deletefacture(facture.id)">Supprimer</button>
+                <button (click)="generatePDF(facture)" class="btn btn-primary">
+                  PDF
+                </button>
+            </div>
+              </td>
+            </tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  
+  </div>

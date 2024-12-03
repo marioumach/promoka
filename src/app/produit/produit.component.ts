@@ -4,6 +4,7 @@ import { Fournisseur } from '../models/fournisseur.model';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
 import { ToastService } from '../toast.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-produit',
@@ -22,7 +23,7 @@ export class ProduitComponent {
   hasMoreData: boolean = true; // Flag to track if more data is available
   produitForm: FormGroup;
 
-  constructor(private produitService: ProduitService, private toastService: ToastService, private fb: FormBuilder) {
+  constructor(private produitService: ProduitService, private toastService: ToastService, private fb: FormBuilder , private titleCasePipe: TitleCasePipe) {
     this.produitForm = this.fb.group({
       nom: ['', [Validators.required]],
       fournisseur: ['', [Validators.required]],
@@ -30,6 +31,10 @@ export class ProduitComponent {
       quantite: ['', [Validators.required, Validators.min(1)]],
       prixAchat: ['', [Validators.required, Validators.min(0)]],
       prixVente: ['', [Validators.required, Validators.min(0)]]
+    });
+    this.produitForm.get('nom')?.valueChanges.subscribe(value => {
+      const titleCasedValue = titleCasePipe.transform(value);
+      this.produitForm.get('nom')?.setValue(titleCasedValue, { emitEvent: false });
     });
   }
 
@@ -45,7 +50,6 @@ export class ProduitComponent {
       this.produits = [...this.produits, ...produits]; // Ajouter les nouveaux produits à la liste existante
       this.filteredProduits = [...this.produits]; // Mettre à jour les produits filtrés
       this.lastDoc = lastDoc; // Mettre à jour le dernier document pour la pagination
-      console.log(produits, lastDoc);
       this.hasMoreData = !!lastDoc;
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error);
@@ -62,6 +66,7 @@ export class ProduitComponent {
   addProduit() {
     if (this.produitForm.valid) {
       this.newProduit = this.produitForm.value
+      this.newProduit.nom = this.titleCasePipe.transform(this.newProduit.nom);
       this.newProduit.nom_lowercase = this.newProduit.nom.trim().toLowerCase();
       this.newProduit.timestamp = new Date().getTime();
       this.newProduit.lastupdate_timestamp = this.newProduit.timestamp;
@@ -83,12 +88,15 @@ export class ProduitComponent {
     if (confirm('Etes vous sur de vouloir supprimer ce produit')) {
       this.produitService.deleteProduit(id).finally(() => {
         this.getProduits();
+        this.toastService.showToast('Produit Supprimé' , 'success')
+
       });
     }
   }
 
   editProduit(produit: any) {
     this.selectedProduit = produit;
+    
     this.updateData = { ...produit };
     setTimeout(() => {
       const updateProductDiv = document.getElementById('update-product');
@@ -100,13 +108,12 @@ export class ProduitComponent {
   }
 
   updateProduit(id: number, data: any) {
+    data.nom = this.titleCasePipe.transform(data.nom);
     data.nom_lowercase = data.nom.trim().toLowerCase();
     data.lastupdate_timestamp = new Date().getTime();
-    console.log('update Product ', data);
 
     this.produitService.updateProduit(id, data).finally(() => {
-      console.log("updated Successfully");
-
+      this.toastService.showToast('Produit Modifié' , 'success')
       this.getProduits();
       this.selectedProduit = null;
     });

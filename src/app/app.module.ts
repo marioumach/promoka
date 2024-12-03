@@ -17,6 +17,7 @@ import { FournisseurPipe } from './pipes/fournisseur.pipe';
 import { ToastComponent } from './toast/toast.component';
 import { FactureComponent } from './facture/facture.component';
 import { ClientComponent } from './client/client.component';
+import { TitleCasePipe } from '@angular/common';
 
 export const environment = {
   production: false,
@@ -52,7 +53,7 @@ export const environment = {
     BrowserAnimationsModule,
     NgxSpinnerModule.forRoot({type: 'ball-spin'}),
   ],
-  providers: [  
+  providers: [  TitleCasePipe,
     {
     provide: HTTP_INTERCEPTORS,
     useClass: InterceptorService,

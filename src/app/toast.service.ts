@@ -20,7 +20,7 @@ export class ToastService {
     // Automatically hide the toast after a few seconds
     setTimeout(() => {
       this.toastSubject.next(null);
-    }, 600000); // Toast will disappear after 3 seconds
+    }, 3000); // Toast will disappear after 3 seconds
   }
 
   hideToast() {

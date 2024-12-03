@@ -68,8 +68,9 @@ export class ProduitComponent {
       this.produitService.addProduit(this.newProduit)
         .finally(() => {
           this.toastService.showToast('produit ajouté', 'success')
-          this.newProduit = {};
           this.getProduits();
+          this.produitForm.reset()
+          this.newProduit = {};
 
         }); 
     } else {

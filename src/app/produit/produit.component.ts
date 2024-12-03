@@ -3,6 +3,7 @@ import { ProduitService } from '../services/produit.service';
 import { Fournisseur } from '../models/fournisseur.model';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
 import { ToastService } from '../toast.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-produit',
@@ -17,10 +18,20 @@ export class ProduitComponent {
   updateData: any = {};
   filteredProduits: any[] = [];
   pageSize = 10; // Taille de la page
-  lastDoc: any= null; // Dernier document pour pagination
+  lastDoc: any = null; // Dernier document pour pagination
   hasMoreData: boolean = true; // Flag to track if more data is available
+  produitForm: FormGroup;
 
-  constructor(private produitService: ProduitService , private toastService : ToastService) {}
+  constructor(private produitService: ProduitService, private toastService: ToastService, private fb: FormBuilder) {
+    this.produitForm = this.fb.group({
+      nom: ['', [Validators.required]],
+      fournisseur: ['', [Validators.required]],
+      codeBarre: ['', [Validators.required]],
+      quantite: ['', [Validators.required, Validators.min(1)]],
+      prixAchat: ['', [Validators.required, Validators.min(0)]],
+      prixVente: ['', [Validators.required, Validators.min(0)]]
+    });
+  }
 
   ngOnInit(): void {
     this.getProduits();
@@ -34,7 +45,7 @@ export class ProduitComponent {
       this.produits = [...this.produits, ...produits]; // Ajouter les nouveaux produits à la liste existante
       this.filteredProduits = [...this.produits]; // Mettre à jour les produits filtrés
       this.lastDoc = lastDoc; // Mettre à jour le dernier document pour la pagination
-      console.log(produits , lastDoc);
+      console.log(produits, lastDoc);
       this.hasMoreData = !!lastDoc;
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error);
@@ -46,30 +57,33 @@ export class ProduitComponent {
     });
   }
   nextPage(): void {
-    this.filterName ?this.getProduits() : this.applyFilters(); // Charger la page suivante
+    this.filterName ? this.getProduits() : this.applyFilters(); // Charger la page suivante
   }
   addProduit() {
-    this.newProduit.nom_lowercase = this.newProduit.nom.trim().toLowerCase();
-    this.newProduit.timestamp = new Date().getTime();
-    this.newProduit.lastupdate_timestamp =  this.newProduit.timestamp;
-    this.produitService.addProduit(this.newProduit)
-    .catch((err)=>{
-      console.log(err);
-      
-    })
-    .finally(() => {
-      this.toastService.showToast('produit ajouté' , 'success')
-      this.newProduit= {};
-      this.getProduits();
-    });
+    if (this.produitForm.valid) {
+      this.newProduit = this.produitForm.value
+      this.newProduit.nom_lowercase = this.newProduit.nom.trim().toLowerCase();
+      this.newProduit.timestamp = new Date().getTime();
+      this.newProduit.lastupdate_timestamp = this.newProduit.timestamp;
+      this.produitService.addProduit(this.newProduit)
+        .finally(() => {
+          this.toastService.showToast('produit ajouté', 'success')
+          this.newProduit = {};
+          this.getProduits();
+
+        }); 
+    } else {
+      this.toastService.showToast('Formulaire Invalide', 'warning')
+    }
+
   }
 
   deleteProduit(id: number) {
     if (confirm('Etes vous sur de vouloir supprimer ce produit')) {
-    this.produitService.deleteProduit(id).finally(() => {
-      this.getProduits();
-    });
-  }
+      this.produitService.deleteProduit(id).finally(() => {
+        this.getProduits();
+      });
+    }
   }
 
   editProduit(produit: any) {
@@ -87,11 +101,11 @@ export class ProduitComponent {
   updateProduit(id: number, data: any) {
     data.nom_lowercase = data.nom.trim().toLowerCase();
     data.lastupdate_timestamp = new Date().getTime();
-    console.log('update Product ',data);
-    
+    console.log('update Product ', data);
+
     this.produitService.updateProduit(id, data).finally(() => {
       console.log("updated Successfully");
-      
+
       this.getProduits();
       this.selectedProduit = null;
     });
@@ -101,14 +115,16 @@ export class ProduitComponent {
   filterFournisseur: string = '';
   filterCodeBarre: string = '';
   // Filtrer les produits en fonction des critères
+
   async applyFilters(): Promise<void> {
     try {
+      let f = this.fournisseurs.find((f) =>  f.nom.toLowerCase().trim().includes(this.filterFournisseur.toLowerCase().trim()))
       const filters = {
         name: this.filterName,
         codeBarre: this.filterCodeBarre,
-        fournisseur: this.filterFournisseur,
+        fournisseur: f ? f.id : this.filterFournisseur,
       };
-
+      this.lastDoc = null
       const { produits, lastDoc } = await this.produitService.getFilteredProduits(this.pageSize, this.lastDoc, filters);
 
       this.filteredProduits = produits;
@@ -121,13 +137,13 @@ export class ProduitComponent {
   filterProduits() {
     this.filteredProduits = this.produits.filter(produit => {
       const fournisseur = this.fournisseurs.find(f => f.id === produit.fournisseur) as Fournisseur;
-  
+
       // Check if fournisseur exists and compare the filter with relevant fields
-      const isFournisseurMatch = this.filterFournisseur === '' || 
-                                 (fournisseur && 
-                                  (fournisseur.nom.toLowerCase().includes(this.filterFournisseur.toLowerCase()) ||
-                                   (fournisseur.telephone.toString().includes(this.filterFournisseur))));
-  
+      const isFournisseurMatch = this.filterFournisseur === '' ||
+        (fournisseur &&
+          (fournisseur.nom.toLowerCase().includes(this.filterFournisseur.toLowerCase()) ||
+            (fournisseur.telephone.toString().includes(this.filterFournisseur))));
+
       return (
         (this.filterName === '' || produit.nom.toLowerCase().includes(this.filterName.toLowerCase())) &&
         isFournisseurMatch &&

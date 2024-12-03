@@ -27,7 +27,7 @@ export class ClientComponent {
       nom: ['', [Validators.required]],
       matricule: ['', [Validators.required]],
       adresse: ['', [Validators.required]],
-      telephone: ['', [Validators.required, Validators.pattern(/^(7|9|2|5|4)\d{7,10}$/)]]
+      telephone: ['', [ Validators.pattern(/^(7|9|2|5|4)\d{7,10}$/)]]
     });
   }
   getClients() {

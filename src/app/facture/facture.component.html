@@ -8,6 +8,12 @@
     <!-- Sélectionner le client -->
     <div class="client-selection">
         <h2>Sélectionner un Client</h2>
+        <input
+        type="date"
+        [(ngModel)]="factureDate"
+        placeholder="Date"
+        class="input-field"
+      />
         <select (change)="onClientsSelected($event)">
           <option value="">Choisir un client</option>
           <option *ngFor="let client of clients" [value]="client.id">
@@ -20,7 +26,7 @@
       <input
       type="text"
       [(ngModel)]="filterName"
-      (keyup)="filterProduits()"
+      (keyup)="applyFilters()"
       placeholder="Nom du produit"
       class="input-field"
     />
@@ -63,7 +69,7 @@
       </tbody>
     </table>
   </div>
-  <button (click)="nextPage()" *ngIf="hasMoreData" [disabled]="!lastDoc">Charger Plus</button>
+  <button (click)="nextPage()" *ngIf="hasMoreData" [disabled]="!lastDoc" class="more">Charger Plus</button>
 
         <!-- Totaux -->
        
@@ -122,6 +128,7 @@
         <table>
           <thead>
             <tr>
+              <th>date</th>
               <th>client</th>
               <th>Nombre Produits</th>
               <th>Total</th>
@@ -130,6 +137,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let facture of savedfactures">
+              <td>{{ (facture.timestamp|date) || "--" }}</td>
               <td>{{ facture.client.nom }}</td>
               <td>{{ facture.products.length }}</td>
               <td>{{ facture.totalAmount.toFixed(3)  }} </td>

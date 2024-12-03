@@ -27,7 +27,7 @@ export class FournisseurComponent {
       nom: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       adresse: ['', [Validators.required]],
-      telephone: ['', [Validators.required, Validators.pattern(/^(7|9|2)\d{7,10}$/)]]
+      telephone: ['']
     });
   }
   getFournisseurs() {

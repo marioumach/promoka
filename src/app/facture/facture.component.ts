@@ -25,7 +25,6 @@ export class FactureComponent implements OnInit {
   onClientsSelected(e: any) {
     let id = e.target.value
     this.selectedClient = this.clients.find(f => (f.id) === (id));
-    console.log(this.selectedClient);
   }
 
   constructor(private factureService: FactureService, private produitService: ProduitService, private toastService: ToastService, private clientService: ClientService) { }
@@ -69,9 +68,7 @@ export class FactureComponent implements OnInit {
       const filters = {
         name: this.filterName,
       };
-
       const { produits, lastDoc } = await this.produitService.getFilteredProduits(this.pageSize, this.lastDoc, filters);
-
       this.filteredProduits = produits;
       this.lastDoc = lastDoc;
       this.hasMoreData = !!lastDoc;
@@ -82,7 +79,7 @@ export class FactureComponent implements OnInit {
   async getProduits(): Promise<void> {
     try {
       const { produits, lastDoc } = await this.produitService.getProduits(this.pageSize, this.lastDoc);
-      this.produits = [...this.produits, ...produits]; // Ajouter les nouveaux produits à la liste existante
+      this.produits = [...produits]; // Ajouter les nouveaux produits à la liste existante
       this.filteredProduits = [...this.produits]; // Mettre à jour les produits filtrés
       this.lastDoc = lastDoc; // Mettre à jour le dernier document pour la pagination
       console.log(produits, lastDoc);
@@ -222,7 +219,7 @@ export class FactureComponent implements OnInit {
     });
   }
   async generatePDF(facture: any) {
-    const doc = new jsPDF();
+    const doc = new jsPDF('p', 'mm', 'a4', true);
     let factureDate = new Date()
     facture.timestamp ? factureDate.setTime(facture.timestamp) :''
     doc.setFont('helvetica', 'bold'); // Appliquer le gras

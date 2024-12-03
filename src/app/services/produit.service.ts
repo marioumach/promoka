@@ -45,7 +45,6 @@ export class ProduitService {
   // Ajouter un nouveau produit
   async addProduit(produit: any): Promise<any> {
     this.spinner.show()
-
     const produitsCollection = collection(this.db, 'produits');
     const docRef = await addDoc(produitsCollection, produit).finally(() => this.spinner.hide());
     return docRef.id; // Return the new document's ID
@@ -54,7 +53,6 @@ export class ProduitService {
   // Supprimer un produit par ID
   async deleteProduit(id: any): Promise<void> {
     this.spinner.show()
-
     const produitDoc = doc(this.db, 'produits', id);
     return await deleteDoc(produitDoc).finally(() => this.spinner.hide());
   }
@@ -65,29 +63,25 @@ export class ProduitService {
     const produitDoc = doc(this.db, 'produits', id);
     return await updateDoc(produitDoc, produit).finally(() => this.spinner.hide());
   }
+
   getFilteredProduits(
     pageSize: number,
     lastDoc: QueryDocumentSnapshot<DocumentData> | null,
     filters: any
   ): Promise<{ produits: any[]; lastDoc: QueryDocumentSnapshot<DocumentData> | null }> {
     const produitsCollection = collection(this.db, 'produits');
-  
     let queryRef = produitsCollection as any;
-  
     // Apply filters
     if (filters.name && filters.name!='') {
       const searchTerm = filters.name.trim().toLowerCase();
-
       queryRef = query(queryRef, where('nom_lowercase', '>=', searchTerm), where('nom_lowercase', '<=', searchTerm + '\uf8ff'));
     }
-    
      if (filters.codeBarre && filters.codeBarre!='') {
        queryRef = query(queryRef, where('codeBarre', '==', filters.codeBarre));
      }
      if (filters.fournisseur && filters.fournisseur!='') {
        queryRef = query(queryRef, where('fournisseur', '==', filters.fournisseur));
      }
-     
     // Pagination
      if (lastDoc) {
        queryRef = query(queryRef, startAfter(lastDoc), limit(pageSize));
@@ -119,18 +113,10 @@ export class ProduitService {
   // Récupérer les produits d'un fournisseur spécifique depuis Firestore
   async getProduitsByFournisseur(fournisseurId: any): Promise<any[]> {
     try {
-      // Reference to the 'produits' collection
       const produitsCollection = collection(this.db, 'produits');
-
-      // Query to filter products where 'fournisseur' field equals the fournisseurId
       const produitsQuery = query(produitsCollection, where('fournisseur', '==', fournisseurId));
-
-      // Fetch the documents matching the query
       const produitSnapshot = await getDocs(produitsQuery).finally(() => this.spinner.hide());
-
-      // Map the data to a list of products
       const produitsList = produitSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-
       return produitsList;
     } catch (error) {
       console.error("Error fetching produits:", error);

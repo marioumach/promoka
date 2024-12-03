@@ -123,7 +123,8 @@ export class CommandeComponent {
     const command = {
       fournisseur: this.selectedFournisseur,
       products: this.selectedProducts,
-      totalAmount: this.totalAmount
+      totalAmount: this.totalAmount,
+      timestamp : new Date().getTime()
     };
 
     this.commandeService.saveCommand(command).then(response => {

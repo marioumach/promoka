@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ProduitService } from '../services/produit.service';
 import { Fournisseur } from '../models/fournisseur.model';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
+import { ToastService } from '../toast.service';
 
 @Component({
   selector: 'app-produit',
@@ -19,7 +20,7 @@ export class ProduitComponent {
   lastDoc: any= null; // Dernier document pour pagination
   hasMoreData: boolean = true; // Flag to track if more data is available
 
-  constructor(private produitService: ProduitService) {}
+  constructor(private produitService: ProduitService , private toastService : ToastService) {}
 
   ngOnInit(): void {
     this.getProduits();
@@ -51,8 +52,13 @@ export class ProduitComponent {
     this.newProduit.nom_lowercase = this.newProduit.nom.trim().toLowerCase();
     this.newProduit.timestamp = new Date().getTime();
     this.newProduit.lastupdate_timestamp =  this.newProduit.timestamp;
-
-    this.produitService.addProduit(this.newProduit).finally(() => {
+    this.produitService.addProduit(this.newProduit)
+    .catch((err)=>{
+      console.log(err);
+      
+    })
+    .finally(() => {
+      this.toastService.showToast('produit ajouté' , 'success')
       this.newProduit= {};
       this.getProduits();
     });

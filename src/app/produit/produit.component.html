@@ -1,114 +1,125 @@
 <div class="produit-container">
-    <h1>Gestion des Produits</h1>
-    
-    <!-- Formulaire pour ajouter un produit -->
-    <div class="add-produit">
-      <h2>Ajouter un Produit</h2>
-      <form [formGroup]="produitForm" (ngSubmit)="addProduit()">
-        <!-- Input for product number -->
-        <label for="nom">Libelle du produit :</label>
-        <input
-          type="text"
-          id="nom"
-          formControlName="nom"
-          required
-          placeholder="Libellé du produit"
-          class="input-field"
-        />
-      
-        <!-- Product supplier selection -->
-        <label for="fournisseur">Fournisseur :</label>
-        <select id="fournisseur" formControlName="fournisseur" required class="input-field">
-          <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id">
-            {{ fournisseur.nom }}
-          </option>
-        </select>
-      
-        <!-- Barcode input -->
-        <label for="codeBarre">Code à barre :</label>
-        <input
-          type="text"
-          id="codeBarre"
-          formControlName="codeBarre"
-          required
-          placeholder="Code à barre"
-          class="input-field"
-        />
-      
-        <!-- Quantity input -->
-        <label for="quantite">Quantité :</label>
-        <input
-          type="number"
-          id="quantite"
-          formControlName="quantite"
-          required
-          placeholder="Quantité"
-          class="input-field"
-        />
-      
-        <!-- Purchase price input -->
-        <label for="prixAchat">Prix d'achat :</label>
-        <input
-          type="number"
-          id="prixAchat"
-          formControlName="prixAchat"
-          required
-          placeholder="Prix d'achat"
-          class="input-field"
-        />
-      
-        <!-- Selling price input -->
-        <label for="prixVente">Prix de vente :</label>
-        <input
-          type="number"
-          id="prixVente"
-          formControlName="prixVente"
-          required
-          placeholder="Prix de vente"
-          class="input-field"
-        />
-      
-        <!-- Submit button -->
-        <button type="submit" class="action-btn">Ajouter</button>
-      </form>
-    </div>
-  
-    <!-- Product filter section -->
-    <div class="filter">
-      <h2>Filtrer les Produits</h2>
-      
-      <!-- Filter by product name -->
+  <h1>Gestion des Produits</h1>
+
+  <!-- Formulaire pour ajouter un produit -->
+  <div class="add-produit">
+    <h2>Ajouter un Produit</h2>
+    <form [formGroup]="produitForm" (ngSubmit)="addProduit()">
+      <!-- Input for product number -->
+      <label for="nom">Libelle du produit :</label>
       <input
         type="text"
-        [(ngModel)]="filterName"
-        (keyup)="applyFilters()"
-        placeholder="Nom du produit"
+        id="nom"
+        formControlName="nom"
+        required
+        placeholder="Libellé du produit"
         class="input-field"
       />
-      
-      <!-- Filter by supplier -->
-      <input
-        type="text"
-        [(ngModel)]="filterFournisseur"
-        (keyup)="applyFilters()"
-        placeholder="Fournisseur"
+
+      <!-- Product supplier selection -->
+      <label for="fournisseur">Fournisseur :</label>
+      <select
+        id="fournisseur"
+        formControlName="fournisseur"
+        required
         class="input-field"
-      />
-      
-      <!-- Filter by barcode -->
+      >
+        <option
+          *ngFor="let fournisseur of fournisseurs"
+          [value]="fournisseur.id"
+        >
+          {{ fournisseur.nom }}
+        </option>
+      </select>
+
+      <!-- Barcode input -->
+      <label for="codeBarre">Code à barre :</label>
       <input
         type="text"
-        [(ngModel)]="filterCodeBarre"
-        (keyup)="applyFilters()"
+        id="codeBarre"
+        formControlName="codeBarre"
+        required
         placeholder="Code à barre"
         class="input-field"
       />
-    </div>
-  
-    <!-- List of products -->
-    <div *ngIf="produits.length > 0">
-      <h2>Liste des Produits</h2>
-      <div class="table-container">
+
+      <!-- Quantity input -->
+      <label for="quantite">Quantité :</label>
+      <input
+        type="number"
+        id="quantite"
+        formControlName="quantite"
+        required
+        placeholder="Quantité"
+        class="input-field"
+      />
+
+      <!-- Purchase price input -->
+      <label for="prixAchat">Prix d'achat :</label>
+      <input
+        type="number"
+        id="prixAchat"
+        formControlName="prixAchat"
+        required
+        placeholder="Prix d'achat"
+        class="input-field"
+      />
+
+      <!-- Selling price input -->
+      <label for="prixVente">Prix de vente :</label>
+      <input
+        type="number"
+        id="prixVente"
+        formControlName="prixVente"
+        required
+        placeholder="Prix de vente"
+        class="input-field"
+      />
+
+      <!-- Submit button -->
+      <button type="submit" class="action-btn">Ajouter</button>
+    </form>
+  </div>
+
+  <!-- Product filter section -->
+  <div class="filter">
+    <h2>Filtrer les Produits</h2>
+
+    <!-- Filter by product name -->
+    <input
+      type="text"
+      [(ngModel)]="filterName"
+      (keyup)="applyFilters()"
+      placeholder="Nom du produit"
+      class="input-field"
+    />
+
+    <!-- Filter by supplier -->
+    <select
+      class="input-field"
+      [(ngModel)]="filterFournisseur"
+      (change)="applyFilters()"
+    >
+      <option [value]="''">Fournisseur</option>
+      <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id">
+        {{ fournisseur.nom }}
+      </option>
+    </select>
+
+    <!-- Filter by barcode -->
+    <input
+      type="text"
+      [(ngModel)]="filterCodeBarre"
+      (keyup)="applyFilters()"
+      placeholder="Code à barre"
+      class="input-field"
+    />
+  </div>
+
+  <!-- List of products -->
+  <div *ngIf="produits.length > 0">
+    <h2>Liste des Produits</h2>
+    <div class="table-container">
       <table class="product-table">
         <thead>
           <tr>
@@ -124,100 +135,108 @@
         <tbody>
           <tr *ngFor="let produit of filteredProduits">
             <td class="no-break">{{ produit.nom_lowercase }}</td>
-            <td class="no-break">{{ (produit.fournisseur|fournisseur:fournisseurs) }}</td>
+            <td class="no-break">
+              {{ produit.fournisseur | fournisseur : fournisseurs }}
+            </td>
             <td class="no-break">{{ produit.codeBarre }}</td>
             <td>{{ produit.quantite }}</td>
-            <td>{{ produit.prixAchat}} </td>
-            <td>{{ produit.prixVente}} </td>
+            <td>{{ produit.prixAchat.toFixed(3) }}</td>
+            <td>{{ produit.prixVente.toFixed(3) }}</td>
             <td class="actions">
               <!-- Delete and edit actions -->
-              <button class="action-btn" (click)="deleteProduit(produit.id)">Supprimer</button>
-              <button class="action-btn" (click)="editProduit(produit)">Modifier</button>
+              <button class="action-btn" (click)="deleteProduit(produit.id)">
+                Supprimer
+              </button>
+              <button class="action-btn" (click)="editProduit(produit)">
+                Modifier
+              </button>
             </td>
           </tr>
         </tbody>
-      </table></div>
-      <button (click)="nextPage()" *ngIf="hasMoreData" [disabled]="!lastDoc">Charger Plus</button>
-
+      </table>
     </div>
-    
-    <!-- Update form for selected product -->
-    <div *ngIf="selectedProduit" class="update-form" id="update-product">
-      <h2>Modifier Produit</h2>
-      <form (ngSubmit)="updateProduit(selectedProduit.id, updateData)">
-        
-        <!-- Inputs for updating product details -->
-        <label for="num">Libelle :</label>
-        <input
-          type="text"
-          id="nom"
-          [(ngModel)]="updateData.nom"
-          name="nom"
-          required
-          placeholder="Libelle du produit"
-          class="input-field"
-        />
-    
-        <label for="fournisseur">Fournisseur :</label>
-        <select
-          id="fournisseur"
-          [(ngModel)]="updateData.fournisseur"
-          name="fournisseur"
-          required
-          class="input-field"
-        >
-          <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id">
-            {{ fournisseur.nom }}
-          </option>
-        </select>
-    
-        <label for="codeBarre">Code à barre :</label>
-        <input
-          type="text"
-          id="codeBarre"
-          [(ngModel)]="updateData.codeBarre"
-          name="codeBarre"
-          required
-          placeholder="Code à barre"
-          class="input-field"
-        />  
-              <label for="quantite">Quantité :</label>
-        <input
-          type="text"
-          id="quantite"
-          [(ngModel)]="updateData.quantite"
-          name="quantite"
-          required
-          placeholder="Quantité"
-          class="input-field"
-        />
-    
-    
-    
-        <label for="prixAchat">Prix d'achat :</label>
-        <input
-          type="number"
-          id="prixAchat"
-          [(ngModel)]="updateData.prixAchat"
-          name="prixAchat"
-          required
-          placeholder="Prix d'achat"
-          class="input-field"
-        />
-    
-        <label for="prixVente">Prix de vente :</label>
-        <input
-          type="number"
-          id="prixVente"
-          [(ngModel)]="updateData.prixVente"
-          name="prixVente"
-          required
-          placeholder="Prix de vente"
-          class="input-field"
-        />
-    
-        <!-- Update button -->
-        <button type="submit" class="action-btn">Modifier</button>
-      </form>
-    </div>
+    <button (click)="nextPage()" *ngIf="hasMoreData" [disabled]="!lastDoc">
+      Charger Plus
+    </button>
   </div>
+
+  <!-- Update form for selected product -->
+  <div *ngIf="selectedProduit" class="update-form" id="update-product">
+    <h2>Modifier Produit</h2>
+    <form (ngSubmit)="updateProduit(selectedProduit.id, updateData)">
+      <!-- Inputs for updating product details -->
+      <label for="num">Libelle :</label>
+      <input
+        type="text"
+        id="nom"
+        [(ngModel)]="updateData.nom"
+        name="nom"
+        required
+        placeholder="Libelle du produit"
+        class="input-field"
+      />
+
+      <label for="fournisseur">Fournisseur :</label>
+      <select
+        id="fournisseur"
+        [(ngModel)]="updateData.fournisseur"
+        name="fournisseur"
+        required
+        class="input-field"
+      >
+        <option
+          *ngFor="let fournisseur of fournisseurs"
+          [value]="fournisseur.id"
+        >
+          {{ fournisseur.nom }}
+        </option>
+      </select>
+
+      <label for="codeBarre">Code à barre :</label>
+      <input
+        type="text"
+        id="codeBarre"
+        [(ngModel)]="updateData.codeBarre"
+        name="codeBarre"
+        required
+        placeholder="Code à barre"
+        class="input-field"
+      />
+      <label for="quantite">Quantité :</label>
+      <input
+        type="text"
+        id="quantite"
+        [(ngModel)]="updateData.quantite"
+        name="quantite"
+        required
+        placeholder="Quantité"
+        class="input-field"
+      />
+
+      <label for="prixAchat">Prix d'achat :</label>
+      <input
+        type="number"
+        id="prixAchat"
+        [(ngModel)]="updateData.prixAchat"
+        name="prixAchat"
+        required
+        placeholder="Prix d'achat"
+        class="input-field"
+      />
+
+      <label for="prixVente">Prix de vente :</label>
+      <input
+        type="number"
+        id="prixVente"
+        [(ngModel)]="updateData.prixVente"
+        name="prixVente"
+        required
+        placeholder="Prix de vente"
+        class="input-field"
+      />
+
+      <!-- Update button -->
+      <button type="submit" class="action-btn">Modifier</button>
+    </form>
+  </div>
+</div>

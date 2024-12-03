@@ -179,11 +179,19 @@ export class FactureComponent implements OnInit {
   }
   // Variable to store selected fournisseur
   selectedfacture: any = null;
-
+  availableProducts : any[]=[]
   // Toggle the details visibility
   viewDetails(facture: any): void {
     this.selectedfacture = { ...facture }; // Clone the facture to avoid modifying the original until save
-    this.selectedfacture.isEditing = false; // Start with non-editing state
+    this.selectedfacture.isEditing = true; // Start with non-editing state
+    this.availableProducts = this.produits.filter(
+      (product) => !this.selectedfacture.products.some((p: any) => p.id === product.id)
+    );
+
+    // Initialize selectedQuantity for each available product
+    this.availableProducts.forEach(product => {
+      product.selectedQuantity = 0; // Start with quantity 0
+    });
 
   }
   deletefacture(factureId: number) {
@@ -200,6 +208,71 @@ export class FactureComponent implements OnInit {
         alert('Erreur lors de la suppression de la facturee');
       }
     );
+  }
+  updateTotalAmount() {
+    let totalAmount = 0;
+    this.selectedfacture.products.forEach((product: any) => {
+      totalAmount += product.quantity * product.prixVente; // Assuming each product has a prixAchat field
+    });
+    this.selectedfacture.totalAmount = totalAmount + this.droit; // Update the totalAmount field in the selected command
+
+  }
+  updateFacture() {
+    this.updateTotalAmount()
+    this.factureService.updatefacture(this.selectedfacture.id, this.selectedfacture).then(
+      (updatedCommand: any) => {
+        // Update the local list of commands after successful save
+        const index = this.savedfactures.findIndex(cmd => (cmd.id) === (updatedCommand.id));
+        this.savedfactures[index] = updatedCommand;
+        this.selectedfacture = null; // Deselect the command after saving
+        alert('Commande mise à jour avec succès');
+        this.loadAllfactures()
+      },
+      (error) => {
+        console.error('Error updating command:', error);
+        alert('Erreur lors de la mise à jour de la commande');
+      }
+    );
+  }
+  cancelEdit() {
+    this.selectedfacture = null; // Deselect the command
+  }
+  // Remove a product from the list
+  removeProduct(index: number) {
+    if (confirm('Are you sure you want to remove this product?')) {
+      this.selectedfacture.products.splice(index, 1);
+      this.updateTotalAmount(); // Remove the product from the array
+    }
+  }
+  editFacture() {
+    this.selectedfacture.isEditing = true; // Enable editing mode
+  }
+  addProduct(product: any) {
+    if (product.selectedQuantity > 0) {
+      this.toastService.showToast('Produit Ajouté!', 'success');
+
+      const newProduct = {
+        ...product,
+        quantity: product.selectedQuantity,
+      };
+      this.selectedfacture.products.push(newProduct); // Add to the products list
+      product.selectedQuantity = 0; // Reset the quantity input
+
+      this.updateTotalAmount();
+    } else {
+      alert('Please enter a valid quantity.');
+    }
+  }
+  areAllSelected: boolean = false;
+
+  toggleSelectAll(event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    this.areAllSelected = isChecked;
+    this.selectedfacture.products.forEach((product: any) => product.isSelected = isChecked);
+  }
+
+  updateSelectionState(): void {
+    this.areAllSelected = this.selectedfacture.products.every((product: any) => product.isSelected);
   }
   droit = 1
   loadImage(url: string): Promise<string> {
@@ -275,33 +348,33 @@ export class FactureComponent implements OnInit {
       head: [['Désignation', 'Quantité / SAC', 'Prix Unitaire HT', 'Prix Total HT']],
       body: rows,
       styles: {
-        halign: 'center', // Alignement horizontal des cellules
-        fontSize: 10, // Taille de la police pour tout le tableau
-        textColor: [0, 0, 0], // Couleur du texte : noir
-        fillColor: [255, 255, 255], // Couleur de fond : blanc
-        lineColor: [0, 0, 0], // Couleur des bordures : noir
-        lineWidth: 0.1 // Épaisseur des bordures
+        halign: 'center', 
+        fontSize: 10, 
+        textColor: [0, 0, 0], 
+        fillColor: [255, 255, 255], 
+        lineColor: [0, 0, 0], 
+        lineWidth: 0.1 
       },
       headStyles: {
-        fillColor: [19, 20, 77], // Couleur de fond de l'en-tête : gris
-        textColor: [255, 255, 255], // Couleur du texte de l'en-tête : blanc
-        fontSize: 12, // Taille de la police pour l'en-tête
-        halign: 'center' // Alignement horizontal de l'en-tête
+        fillColor: [19, 20, 77], 
+        textColor: [255, 255, 255], 
+        fontSize: 12, 
+        halign: 'center' 
       },
       bodyStyles: {
-        fillColor: [255, 255, 255], // Couleur de fond des lignes : blanc
-        textColor: [0, 0, 0], // Couleur du texte des lignes : noir
-        fontSize: 11, // Taille de la police pour l'en-tête
+        fillColor: [255, 255, 255], 
+        textColor: [0, 0, 0], 
+        fontSize: 11, 
 
       },
     
       columnStyles: {
-        0: { halign: 'left' }, // Alignement à gauche pour la désignation
-        3: { fontStyle: 'bold' } // Mettre en gras la colonne des totaux
+        0: { halign: 'left' }, 
+        3: { fontStyle: 'bold' } 
       },
       alternateRowStyles : {
-        fillColor: [255, 255, 255], // Couleur de fond des lignes : blanc
-        textColor: [0, 0, 0] // Couleur du texte des lignes : noir
+        fillColor: [255, 255, 255], 
+        textColor: [0, 0, 0] 
       },
      
     });

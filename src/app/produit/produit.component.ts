@@ -39,9 +39,9 @@ export class ProduitComponent {
   }
 
 
-  async getProduits(): Promise<void> {
+  async getProduits(last: any = null): Promise<void> {
     try {
-      const { produits, lastDoc } = await this.produitService.getProduits(this.pageSize, this.lastDoc);
+      const { produits, lastDoc } = await this.produitService.getProduits(this.pageSize, last);
       this.produits = [...this.produits, ...produits]; // Ajouter les nouveaux produits à la liste existante
       this.filteredProduits = [...this.produits]; // Mettre à jour les produits filtrés
       this.lastDoc = lastDoc; // Mettre à jour le dernier document pour la pagination
@@ -57,7 +57,7 @@ export class ProduitComponent {
     });
   }
   nextPage(): void {
-    this.filterName ? this.getProduits() : this.applyFilters(); // Charger la page suivante
+    this.filterName || this.filterFournisseur || this.filterCodeBarre ? this.applyFilters(this.lastDoc) : this.getProduits(this.lastDoc); // Charger la page suivante
   }
   addProduit() {
     if (this.produitForm.valid) {
@@ -116,17 +116,15 @@ export class ProduitComponent {
   filterCodeBarre: string = '';
   // Filtrer les produits en fonction des critères
 
-  async applyFilters(): Promise<void> {
-    try {
-      let f = this.fournisseurs.find((f) =>  f.nom.toLowerCase().trim().includes(this.filterFournisseur.toLowerCase().trim()))
+  async applyFilters(last : any = null): Promise<void> {
+    try {      
+      let f = this.fournisseurs.find((f) =>  this.filterFournisseur && f.nom.toLowerCase().trim().includes(this.filterFournisseur.toLowerCase().trim()))
       const filters = {
         name: this.filterName,
         codeBarre: this.filterCodeBarre,
         fournisseur: f ? f.id : this.filterFournisseur,
       };
-      this.lastDoc = null
-      const { produits, lastDoc } = await this.produitService.getFilteredProduits(this.pageSize, this.lastDoc, filters);
-
+      const { produits, lastDoc } = await this.produitService.getFilteredProduits(this.pageSize, last, filters);
       this.filteredProduits = produits;
       this.lastDoc = lastDoc;
       this.hasMoreData = !!lastDoc;

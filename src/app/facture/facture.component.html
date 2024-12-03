@@ -23,6 +23,7 @@
       </div>
         <!-- Liste des produits -->
          <!-- Filter by product name -->
+          <div *ngIf="selectedClient">
       <input
       type="text"
       [(ngModel)]="filterName"
@@ -70,7 +71,7 @@
     </table>
   </div>
   <button (click)="nextPage()" *ngIf="hasMoreData" [disabled]="!lastDoc" class="more">Charger Plus</button>
-
+</div>
         <!-- Totaux -->
        
     </div>
@@ -155,5 +156,134 @@
         </table></div>
       </div>
     </div>
-  
+    <div *ngIf="selectedfacture">
+      <div class="product-list">
+        <h4 class="section-subtitle">Produits dans cette Facture:</h4>
+        <div class="table-container">
+        <table class="product-table">
+          <thead>
+            <tr>
+              <th>
+                <input 
+                  type="checkbox" 
+                  [checked]="areAllSelected" 
+                  (change)="toggleSelectAll($event)" 
+                  title="Select All"
+                />
+              </th>
+              <th>Nom du Produit</th>
+              <th>Quantité</th>
+              <th>Prix de vente</th>
+              <th>Sous Total</th>
+              <th *ngIf="selectedfacture.isEditing">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of selectedfacture.products; let i = index">
+              <td>
+                <input 
+                  type="checkbox" 
+                  [(ngModel)]="product.isSelected" 
+                  (change)="updateSelectionState()"
+                />
+              </td>
+              <td>
+                <span class="product-name">{{ product.nom }}</span>
+              </td>         
+              <td>
+                <input 
+                  (change)="updateTotalAmount()"
+                  [(ngModel)]="product.quantity" 
+                  type="number" 
+                  min="1" 
+                  [readonly]="!selectedfacture.isEditing" 
+                  placeholder="Quantité" 
+                  class="quantity-input"
+                />
+              </td>   <td>
+                <span class="product-name">{{ product.prixVente.toFixed(3) }}</span>
+              </td>    <td>
+                <span class="product-name">{{ (product.prixVente*product.quantity).toFixed(3) }}</span>
+              </td>
+              <td *ngIf="selectedfacture.isEditing">
+                <button 
+                  (click)="removeProduct(i)" 
+                  class="delete-btn"
+                  title="Supprimer ce produit"
+                >
+                  Supprimer
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table></div>
+      </div>
+      <!-- Available products from the fournisseur that are not in the Facture -->
+      <div *ngIf="selectedfacture.isEditing && availableProducts.length > 0" class="add-new-products">
+        <h4 class="section-subtitle">Ajouter de nouveaux produits</h4>
+        <div class="table-container">
+        <table class="product-table">
+          <thead>
+            <tr>
+              <th>Nom du produit</th>
+              <th>Prix</th>
+              <th>Quantité</th>
+              <th>Ajouter</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of availableProducts; let i = index">
+              <td>{{ product.nom }}</td>
+              <td>{{ product.prixAchat }} </td>
+              <td>
+                <input 
+                  [(ngModel)]="product.selectedQuantity" 
+                  type="number" 
+                  min="1" 
+                  placeholder="Quantité" 
+                  class="quantity-input"
+                />
+              </td>
+              <td>
+                <button 
+                  (click)="addProduct(product)" 
+                  [disabled]="product.selectedQuantity <= 0"
+                  class="action-btn"
+                  title="Ajouter ce produit"
+                >
+                  Ajouter
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table></div>
+      </div>
+    
+      <div class="edit-buttons">
+        <button 
+          *ngIf="selectedfacture.isEditing" 
+          (click)="updateFacture()" 
+          class="action-btn save-btn"
+          title="Enregistrer les modifications"
+        >
+          Enregistrer les modifications
+        </button>
+        <button 
+          *ngIf="selectedfacture.isEditing" 
+          (click)="cancelEdit()" 
+          class="action-btn cancel-btn"
+          title="Annuler les modifications"
+        >
+          Annuler
+        </button>
+        <button 
+          *ngIf="!selectedfacture.isEditing" 
+          (click)="editFacture()" 
+          class="action-btn edit-btn"
+          title="Modifier la Facture"
+        >
+          Modifier
+        </button>
+      </div>
+  </div>
   </div>

@@ -69,9 +69,8 @@ export class ProduitService {
     lastDoc: QueryDocumentSnapshot<DocumentData> | null,
     filters: any
   ): Promise<{ produits: any[]; lastDoc: QueryDocumentSnapshot<DocumentData> | null }> {
-    const produitsCollection = collection(this.db, 'produits');
+    const produitsCollection = collection(this.db, 'produits');    
     let queryRef = produitsCollection as any;
-    // Apply filters
     if (filters.name && filters.name!='') {
       const searchTerm = filters.name.trim().toLowerCase();
       queryRef = query(queryRef, where('nom_lowercase', '>=', searchTerm), where('nom_lowercase', '<=', searchTerm + '\uf8ff'));
@@ -88,16 +87,15 @@ export class ProduitService {
      } else {
       queryRef = query(queryRef, limit(pageSize));
      }
-  
+
     return getDocs(queryRef).then((querySnapshot) => {
       // Explicitly type doc.data() as a generic object type
       const produits = querySnapshot.docs.map((doc) => {
         const data = doc.data() as Record<string, any>; // Cast to a generic object
         return { id: doc.id, ...data };
       });
-      console.log(produits);
+
       
-  
       const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1] as QueryDocumentSnapshot<DocumentData> | null;
       return { produits, lastDoc: lastVisible };
     });

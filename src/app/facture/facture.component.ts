@@ -149,20 +149,17 @@ export class FactureComponent implements OnInit {
       client: this.selectedClient,
       products: this.selectedProducts,
       totalAmount: this.totalAmount,
-      timestamp : new Date().getTime()
+      timestamp : new Date(this.factureDate).getTime()
     };
-
     this.factureService.savefacture(command).then(response => {
       this.toastService.showToast('Commande sauvegardée avec succès!', 'success');
-
-      this.loadAllfactures(); // Reload the commands after saving a new one
+      this.loadAllfactures(); 
       this.selectedClient = null
       this.selectedProducts = []
       this.totalAmount = 0
     });
   }
 
-  // Réinitialiser le formulaire
   resetForm(): void {
     this.selectedClient = null;
     this.selectedProducts = [];
@@ -171,33 +168,27 @@ export class FactureComponent implements OnInit {
     this.factureDate = new Date().toISOString().split('T')[0];
   }
   savedfactures: any[] = []
-  // Load all saved factures from the backend
   loadAllfactures() {
     this.factureService.getAllfactures().then(factures => {
       this.savedfactures = factures;
     });
   }
-  // Variable to store selected fournisseur
   selectedfacture: any = null;
   availableProducts : any[]=[]
-  // Toggle the details visibility
   viewDetails(facture: any): void {
-    this.selectedfacture = { ...facture }; // Clone the facture to avoid modifying the original until save
-    this.selectedfacture.isEditing = true; // Start with non-editing state
+    this.selectedfacture = { ...facture }; 
+    this.selectedfacture.isEditing = true; 
     this.availableProducts = this.produits.filter(
       (product) => !this.selectedfacture.products.some((p: any) => p.id === product.id)
     );
 
-    // Initialize selectedQuantity for each available product
     this.availableProducts.forEach(product => {
-      product.selectedQuantity = 0; // Start with quantity 0
+      product.selectedQuantity = 0;
     });
 
   }
   deletefacture(factureId: number) {
-    // Logic to delete a facture based on factureId
     console.log(`Deleting facture with ID: ${factureId}`);
-    // Call your API service to delete the facture
     this.factureService.deletefacture(factureId).then(
       () => {
         this.loadAllfactures()
@@ -212,19 +203,18 @@ export class FactureComponent implements OnInit {
   updateTotalAmount() {
     let totalAmount = 0;
     this.selectedfacture.products.forEach((product: any) => {
-      totalAmount += product.quantity * product.prixVente; // Assuming each product has a prixAchat field
+      totalAmount += product.quantity * product.prixVente; 
     });
-    this.selectedfacture.totalAmount = totalAmount + this.droit; // Update the totalAmount field in the selected command
+    this.selectedfacture.totalAmount = totalAmount + this.droit; 
 
   }
   updateFacture() {
     this.updateTotalAmount()
     this.factureService.updatefacture(this.selectedfacture.id, this.selectedfacture).then(
       (updatedCommand: any) => {
-        // Update the local list of commands after successful save
         const index = this.savedfactures.findIndex(cmd => (cmd.id) === (updatedCommand.id));
         this.savedfactures[index] = updatedCommand;
-        this.selectedfacture = null; // Deselect the command after saving
+        this.selectedfacture = null; 
         alert('Commande mise à jour avec succès');
         this.loadAllfactures()
       },
@@ -235,17 +225,16 @@ export class FactureComponent implements OnInit {
     );
   }
   cancelEdit() {
-    this.selectedfacture = null; // Deselect the command
+    this.selectedfacture = null; 
   }
-  // Remove a product from the list
   removeProduct(index: number) {
     if (confirm('Are you sure you want to remove this product?')) {
       this.selectedfacture.products.splice(index, 1);
-      this.updateTotalAmount(); // Remove the product from the array
+      this.updateTotalAmount();
     }
   }
   editFacture() {
-    this.selectedfacture.isEditing = true; // Enable editing mode
+    this.selectedfacture.isEditing = true; 
   }
   addProduct(product: any) {
     if (product.selectedQuantity > 0) {
@@ -255,8 +244,8 @@ export class FactureComponent implements OnInit {
         ...product,
         quantity: product.selectedQuantity,
       };
-      this.selectedfacture.products.push(newProduct); // Add to the products list
-      product.selectedQuantity = 0; // Reset the quantity input
+      this.selectedfacture.products.push(newProduct);
+      product.selectedQuantity = 0; 
 
       this.updateTotalAmount();
     } else {
@@ -264,7 +253,6 @@ export class FactureComponent implements OnInit {
     }
   }
   areAllSelected: boolean = false;
-
   toggleSelectAll(event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     this.areAllSelected = isChecked;
@@ -295,26 +283,21 @@ export class FactureComponent implements OnInit {
     const doc = new jsPDF('p', 'mm', 'a4', true);
     let factureDate = new Date()
     facture.timestamp ? factureDate.setTime(facture.timestamp) :''
-    doc.setFont('helvetica', 'bold'); // Appliquer le gras
-
+    doc.setFont('helvetica', 'bold');
     const logo = await this.loadImage('/assets/images/logo1.png');
     let factureNumber = (this.savedfactures.length+300).toString() + "/" + factureDate.getFullYear().toString()
-    // Titre principal
-    doc.addImage(logo, 'PNG', 15, 10, 60, 30); // Position (x, y) et taille (width, height)
+    doc.addImage(logo, 'PNG', 15, 10, 60, 30);
 
-    // Informations de l'entreprise en haut à droite
     doc.setFontSize(11);
     doc.text(`Sousse le ${factureDate.toLocaleDateString('fr-FR')}`, 130, 16);
     doc.text('PROMOKA SHOP', 130, 24,);
     doc.text('ADRESSE : Rue 2 mars Akouda', 130, 32);
     doc.text('MF : 185560Y/N/M000', 130, 40);
 
-    // Date et numéro de facture centré
     doc.setFontSize(16);
     doc.text(`FACTURE N° ${factureNumber}`, 105, 56, { align: 'center' });
     doc.setFontSize(11);
 
-    // Informations du client
     doc.text('CLIENT : ', 14, 72);
     doc.text(facture.client.nom, 40, 72);
     doc.text('ADRESSE : ', 14, 80);
@@ -330,13 +313,11 @@ export class FactureComponent implements OnInit {
       p.prixVente.toFixed(3),
       (p.prixVente * p.quantity).toFixed(3)
     ])
-    // Ajouter des lignes vides pour atteindre 24 lignes
-    const totalRows = 16; // Nombre total de lignes souhaité
-    while (rows.length < totalRows - 4) { // Réserver 4 lignes pour les totaux
+    const totalRows = 16; 
+    while (rows.length < totalRows - 4) {
       rows.push(['', '', '', '']);
     }
 
-    // Ajouter les lignes pour les totaux
     rows.push(
       ['', '', 'Total HT', totalAmount.toFixed(3)],
       ['', '', 'TVA', '0.000'],
@@ -379,15 +360,13 @@ export class FactureComponent implements OnInit {
      
     });
 
-    // Cachet et signature en bas à droite de la page
-    const pageHeight = doc.internal.pageSize.height; // Hauteur de la page
-    const pageWidth = doc.internal.pageSize.width; // Largeur de la page
+    const pageHeight = doc.internal.pageSize.height; 
+    const pageWidth = doc.internal.pageSize.width; 
 
     doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold'); // Appliquer le gras
+    doc.setFont('helvetica', 'bold');
 
-    doc.text('Cachet et Signature', pageWidth - 70, pageHeight - 50); // Texte positionné en bas à droite
-    // Sauvegarder le PDF
-    doc.save(`Facture_${factureNumber}.pdf`);
+    doc.text('Cachet et Signature', pageWidth - 70, pageHeight - 50); 
+    doc.save(`Facture_${factureNumber}_${facture.client.id}.pdf`);
   }
 }

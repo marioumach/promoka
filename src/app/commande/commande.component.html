@@ -149,7 +149,7 @@
     
     <div class="detail">
       <strong>Montant Total :</strong>
-      <span class="amount">{{ selectedCommand.totalAmount }}</span>
+      <span class="amount">{{ selectedCommand.totalAmount.toFixed(3) }}</span>
     </div>
     <div class="detail">
       <strong>Nombre de Produits :</strong>
@@ -206,7 +206,7 @@
             </td>   <td>
               <span class="product-name">{{ product.prixAchat.toFixed(3) }}</span>
             </td>    <td>
-              <span class="product-name">{{ (product.prixAchat*3).toFixed(3) }}</span>
+              <span class="product-name">{{ (product.prixAchat*product.quantity).toFixed(3) }}</span>
             </td>
             <td *ngIf="selectedCommand.isEditing">
               <button 
@@ -221,10 +221,17 @@
         </tbody>
       </table></div>
     </div>
-  
+  {{selectedCommand.isEditing|json}}
     <!-- Available products from the fournisseur that are not in the command -->
     <div *ngIf="selectedCommand.isEditing && availableProducts.length > 0" class="add-new-products">
       <h4 class="section-subtitle">Ajouter de nouveaux produits</h4>
+      <input
+              type="text"
+              [(ngModel)]="filterAvailableName"
+              (keyup)="filterAvailableProduits()"
+              placeholder="Nom du produit"
+              class="input-field"
+      />
       <div class="table-container">
       <table class="product-table">
         <thead>
@@ -236,9 +243,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let product of availableProducts; let i = index">
+          <tr *ngFor="let product of filteredAvailableProduits; let i = index">
             <td>{{ product.nom }}</td>
-            <td>{{ product.prixAchat }} </td>
+            <td>{{ product.prixAchat.toFixed(3) }} </td>
             <td>
               <input 
                 [(ngModel)]="product.selectedQuantity" 
@@ -246,7 +253,6 @@
                 min="1" 
                 placeholder="Quantité" 
                 class="quantity-input"
-                [disabled]="product.selectedQuantity <= 0"
               />
             </td>
             <td>

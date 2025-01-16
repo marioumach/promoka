@@ -85,6 +85,10 @@ export class CommandeComponent {
         quantity: product.selectedQuantity,
       };
       this.selectedCommand.products.push(newProduct); // Add to the products list
+      let i1 = this.availableProducts.findIndex((p) => p.id==product.id) ;
+      i1>-1?this.availableProducts.splice(i1,1):''
+      let i2 = this.filteredAvailableProduits.findIndex((p) => p.id==product.id) ;
+      i2>-1?this.filteredAvailableProduits.splice(i2,1):''
       product.selectedQuantity = 0; // Reset the quantity input
 
       this.updateTotalAmount();
@@ -165,6 +169,7 @@ export class CommandeComponent {
       this.availableProducts.forEach(product => {
         product.selectedQuantity = 0; // Start with quantity 0
       });
+      this.filteredAvailableProduits = this.availableProducts
     });
   }
   deleteCommand(commandId: number) {
@@ -189,6 +194,7 @@ export class CommandeComponent {
   removeProduct(index: number) {
     if (confirm('Are you sure you want to remove this product?')) {
       this.selectedCommand.products.splice(index, 1);
+      this.loadAvailableProducts(this.selectedCommand.fournisseur.id)
       this.updateTotalAmount(); // Remove the product from the array
     }
   }
@@ -233,11 +239,20 @@ export class CommandeComponent {
         (this.filterName === '' || produit.nom.toLowerCase().includes(this.filterName.toLowerCase())));
     });
   }
+  filterAvailableName = ''
+  filteredAvailableProduits: any[] = []
+  filterAvailableProduits() {
+    this.filteredAvailableProduits = this.availableProducts.filter(produit => {
+      return (
+        (this.filterAvailableName === '' || produit.nom.toLowerCase().includes(this.filterAvailableName.toLowerCase())));
+    });
+    console.log("filterAvailableProduits",this.filteredAvailableProduits)
+  }
   generatePDF(command: any): void {
     const doc = new jsPDF();
 
     // Title - Centered
-    const title = 'Détails de la Commande';
+    const title = 'Bon de Commande #'+(this.savedCommands.length+10)+'/2025';
     doc.setFontSize(16);
     const pageWidth = doc.internal.pageSize.getWidth();
     const titleWidth = doc.getTextWidth(title);

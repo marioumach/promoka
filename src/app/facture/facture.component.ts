@@ -285,7 +285,7 @@ export class FactureComponent implements OnInit {
     facture.timestamp ? factureDate.setTime(facture.timestamp) :''
     doc.setFont('helvetica', 'bold');
     const logo = await this.loadImage('/assets/images/logo1.png');
-    let factureNumber = (this.savedfactures.length+300).toString() + "/" + factureDate.getFullYear().toString()
+    let factureNumber = (51).toString() + "/" + factureDate.getFullYear().toString()
     doc.addImage(logo, 'PNG', 15, 10, 60, 30);
 
     doc.setFontSize(11);
@@ -368,5 +368,80 @@ export class FactureComponent implements OnInit {
 
     doc.text('Cachet et Signature', pageWidth - 70, pageHeight - 50); 
     doc.save(`Facture_${factureNumber}_${facture.client.id}.pdf`);
+  }
+  invoice : any
+  currentDate: string = new Date().toLocaleDateString('fr-FR');
+  totalHT: number = 0;
+  totalTTC: number = 0;
+  calculateTotal(): void {
+    this.totalHT = this.invoice.products.reduce(
+        (sum: number, product: any) => sum + product.quantity * product.prixVente,
+        0
+    );
+    this.totalTTC = this.totalHT + this.invoice.droit;
+  }
+  printTicket(invoice:any): void {
+    this.invoice = invoice
+    this.calculateTotal()
+    setTimeout(()=>{
+    const ticketContent = document.getElementById('ticket')?.outerHTML;
+    console.log(ticketContent)
+    if (!ticketContent) return;
+
+    const newWindow = window.open('', '_blank');
+    newWindow?.document.write(`
+      <html>
+      <head>
+        <title>Print Ticket</title>
+        <style>
+          /* Add your styles here if not using global styles */
+          #ticket {
+            width: 100mm;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            margin: 0;
+            padding: 10px;
+            line-height: 1;
+          }
+          #ticket .header {
+            text-align: center;
+          }
+          #ticket .footer {
+            text-align: right;
+          }
+          #ticket .details {
+            margin-top: 10px;
+          }
+          #ticket .items {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          #ticket .items th, #ticket .items td {
+            text-align: left;
+            padding: 4px 0;
+          }
+          #ticket .items th {
+            font-weight: bold;
+            font-size: 12px;
+            border-bottom: 1px dashed black;
+          }
+          #ticket .items td {
+            font-size: 10px;
+          }
+          #ticket .totals {
+            margin-top: 10px;
+            text-align: right;
+          }
+          #ticket .totals div {
+            margin: 4px 0;
+          }
+        </style>
+      </head>
+      <body onload="window.print(); window.close();">
+        ${ticketContent}
+      </body>
+      </html>
+    `);
+    newWindow?.document.close();},500)
   }
 }

@@ -149,6 +149,9 @@
                 <button (click)="generatePDF(facture)" class="btn btn-primary">
                   PDF
                 </button>
+                  <button (click)="printTicket(facture)" class="btn btn-secondary">
+                  Ticket
+                </button>
             </div>
               </td>
             </tr>
@@ -287,3 +290,67 @@
       </div>
   </div>
   </div>
+<div  style="display: none;" *ngIf="invoice">
+<div id="ticket" >
+  <div class="header">
+    <h2>PROMOKA SHOP</h2>
+    <p>Rue 2 mars Akouda</p>
+    <p>MF: 185560Y/N/M000</p>
+    <p>Sousse le {{ currentDate }}</p>
+  </div>
+
+  <div class="details">
+    <p><strong>Client:</strong> {{ invoice.client.name }}</p>
+    <p><strong>Adresse:</strong> {{ invoice.client.address }}</p>
+    <p><strong>MF:</strong> {{ invoice.client.matricule }}</p>
+  </div>
+
+  <table class="items">
+    <thead>
+    <tr>
+      <th>Désignation</th>
+      <th>Qté</th>
+      <th>P.U HT</th>
+      <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let product of invoice.products">
+      <td>{{ product.nom }}</td>
+      <td>{{ product.quantity }}</td>
+      <td>{{ product.prixVente | number:'1.3-3' }}</td>
+      <td>{{ product.quantity * product.prixVente | number:'1.3-3' }}</td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr >
+      <td></td>
+      <td></td>
+      <th>Total HT:</th>
+      <th>{{ totalHT | number:'1.3-3' }}</th>
+    </tr>
+    <tr >
+      <td></td>
+      <td></td>
+      <th>TVA:</th>
+      <th>{{ 0 | number:'1.3-3' }}</th>
+    </tr>
+    <tr >
+      <td></td>
+      <td></td>
+      <th>Droit de Timbre:</th>
+      <th>{{ droit | number:'1.3-3' }}</th>
+    </tr>
+    <tr >
+      <td></td>
+      <td></td>
+      <th>Total TTC:</th>
+      <th>{{ (totalHT + droit) | number:'1.3-3' }}</th>
+    </tr>
+    </tfoot>
+  </table>
+  <div class="footer">
+    <p>Cachet et Signature</p>
+  </div>
+</div>
+</div>

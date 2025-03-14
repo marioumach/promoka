@@ -41,6 +41,10 @@
   transition: color 0.3s;
   cursor: pointer;
 }
+.nav_link_active{
+  color: #53b558 !important;
+  text-decoration: underline;
+}
 .content-container {
   padding: 30px;
 }

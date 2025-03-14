@@ -23,7 +23,7 @@ export class ProduitComponent {
   hasMoreData: boolean = true; // Flag to track if more data is available
   produitForm: FormGroup;
 
-  constructor(private produitService: ProduitService, private toastService: ToastService, private fb: FormBuilder , private titleCasePipe: TitleCasePipe) {
+  constructor(private produitService: ProduitService, private toastService: ToastService, private fb: FormBuilder, private titleCasePipe: TitleCasePipe) {
     this.produitForm = this.fb.group({
       nom: ['', [Validators.required]],
       fournisseur: ['', [Validators.required]],
@@ -42,8 +42,6 @@ export class ProduitComponent {
     this.getProduits();
     this.getFournisseurs();
   }
-
-
   async getProduits(last: any = null): Promise<void> {
     try {
       const { produits, lastDoc } = await this.produitService.getProduits(this.pageSize, last);
@@ -77,18 +75,17 @@ export class ProduitComponent {
           this.produitForm.reset()
           this.newProduit = {};
 
-        }); 
+        });
     } else {
       this.toastService.showToast('Formulaire Invalide', 'warning')
     }
-
   }
 
   deleteProduit(id: number) {
     if (confirm('Etes vous sur de vouloir supprimer ce produit')) {
       this.produitService.deleteProduit(id).finally(() => {
         this.getProduits();
-        this.toastService.showToast('Produit Supprimé' , 'success')
+        this.toastService.showToast('Produit Supprimé', 'success')
 
       });
     }
@@ -96,7 +93,7 @@ export class ProduitComponent {
 
   editProduit(produit: any) {
     this.selectedProduit = produit;
-    
+
     this.updateData = { ...produit };
     setTimeout(() => {
       const updateProductDiv = document.getElementById('update-product');
@@ -113,7 +110,7 @@ export class ProduitComponent {
     data.lastupdate_timestamp = new Date().getTime();
 
     this.produitService.updateProduit(id, data).finally(() => {
-      this.toastService.showToast('Produit Modifié' , 'success')
+      this.toastService.showToast('Produit Modifié', 'success')
       this.getProduits();
       this.selectedProduit = null;
     });
@@ -124,9 +121,9 @@ export class ProduitComponent {
   filterCodeBarre: string = '';
   // Filtrer les produits en fonction des critères
 
-  async applyFilters(last : any = null): Promise<void> {
-    try {      
-      let f = this.fournisseurs.find((f) =>  this.filterFournisseur && f.nom.toLowerCase().trim().includes(this.filterFournisseur.toLowerCase().trim()))
+  async applyFilters(last: any = null): Promise<void> {
+    try {
+      let f = this.fournisseurs.find((f) => this.filterFournisseur && f.nom.toLowerCase().trim().includes(this.filterFournisseur.toLowerCase().trim()))
       const filters = {
         name: this.filterName,
         codeBarre: this.filterCodeBarre,

@@ -1,0 +1,37 @@
+[debug] [2025-03-15T00:07:44.419Z] ----------------------------------------------------------------------
+[debug] [2025-03-15T00:07:44.422Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\merie\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2025-03-15T00:07:44.422Z] CLI Version:   13.27.0
+[debug] [2025-03-15T00:07:44.422Z] Platform:      win32
+[debug] [2025-03-15T00:07:44.422Z] Node Version:  v20.10.0
+[debug] [2025-03-15T00:07:44.422Z] Time:          Sat Mar 15 2025 01:07:44 GMT+0100 (heure normale d’Afrique de l’Ouest)
+[debug] [2025-03-15T00:07:44.422Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-03-15T00:07:44.482Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-03-15T00:07:44.482Z] > authorizing via signed-in user (meriem.chaieb@camel-soft.com)
+[debug] [2025-03-15T00:07:44.482Z] [iam] checking project promoka-494d0 for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-03-15T00:07:44.483Z] Checked if tokens are valid: false, expires at: 1741997297518
+[debug] [2025-03-15T00:07:44.484Z] Checked if tokens are valid: false, expires at: 1741997297518
+[debug] [2025-03-15T00:07:44.484Z] > refreshing access token with scopes: []
+[debug] [2025-03-15T00:07:44.485Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-03-15T00:07:44.485Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-03-15T00:07:44.883Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-03-15T00:07:44.883Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-03-15T00:07:44.892Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/promoka-494d0:testIamPermissions [none]
+[debug] [2025-03-15T00:07:44.892Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/promoka-494d0:testIamPermissions x-goog-quota-user=projects/promoka-494d0
+[debug] [2025-03-15T00:07:44.892Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/promoka-494d0:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-03-15T00:07:45.938Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/promoka-494d0:testIamPermissions 200
+[debug] [2025-03-15T00:07:45.938Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/promoka-494d0:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-03-15T00:07:45.939Z] Checked if tokens are valid: true, expires at: 1742000863883
+[debug] [2025-03-15T00:07:45.939Z] Checked if tokens are valid: true, expires at: 1742000863883
+[debug] [2025-03-15T00:07:45.939Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/promoka-494d0 [none]
+[debug] [2025-03-15T00:07:46.603Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/promoka-494d0 200
+[debug] [2025-03-15T00:07:46.603Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/promoka-494d0 {"projectId":"promoka-494d0","projectNumber":"246367716974","displayName":"PROMOKA","name":"projects/promoka-494d0","resources":{"hostingSite":"promoka-494d0"},"state":"ACTIVE","etag":"1_a5107cea-61a3-41a1-810f-32cf508fdf4b"}
+[info] 
+[info] === Deploying to 'promoka-494d0'...
+[info] 
+[info] i  deploying firestore, hosting 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2025-03-15T00:07:46.611Z] Checked if tokens are valid: true, expires at: 1742000863883
+[debug] [2025-03-15T00:07:46.611Z] Checked if tokens are valid: true, expires at: 1742000863883
+[debug] [2025-03-15T00:07:46.612Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/promoka-494d0:test [none]
+[debug] [2025-03-15T00:07:46.612Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/promoka-494d0:test [omitted]

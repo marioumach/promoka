@@ -27,7 +27,7 @@ export class ProduitComponent {
     this.produitForm = this.fb.group({
       nom: ['', [Validators.required]],
       fournisseur: ['', [Validators.required]],
-      codeBarre: ['', [Validators.required]],
+      codeBarre: [''],
       quantite: ['', [Validators.required, Validators.min(1)]],
       prixAchat: ['', [Validators.required, Validators.min(0)]],
       prixVente: ['', [Validators.required, Validators.min(0)]]
@@ -93,7 +93,6 @@ export class ProduitComponent {
 
   editProduit(produit: any) {
     this.selectedProduit = produit;
-
     this.updateData = { ...produit };
     setTimeout(() => {
       const updateProductDiv = document.getElementById('update-product');

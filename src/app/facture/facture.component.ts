@@ -326,7 +326,7 @@ export class FactureComponent implements OnInit {
     );
     autoTable(doc, {
       startY: 104,
-      head: [['Désignation', 'Quantité / SAC', 'Prix Unitaire HT', 'Prix Total HT']],
+      head: [['Désignation', 'Quantité ', 'Prix HT', 'Prix TTC']],
       body: rows,
       styles: {
         halign: 'center', 
@@ -385,9 +385,7 @@ export class FactureComponent implements OnInit {
     this.calculateTotal()
     setTimeout(()=>{
     const ticketContent = document.getElementById('ticket')?.outerHTML;
-    console.log(ticketContent)
     if (!ticketContent) return;
-
     const newWindow = window.open('', '_blank');
     newWindow?.document.write(`
       <html>
@@ -443,5 +441,89 @@ export class FactureComponent implements OnInit {
       </html>
     `);
     newWindow?.document.close();},500)
+  }
+  sliceProductName(name: string): string {
+    name = name.toUpperCase()
+    if (name.length > 20) {
+      return name.slice(0, 20) + '.';
+    }
+    return name;
+  }
+  async generateTicket(facture: any) {
+    const doc =  new jsPDF('p', 'mm', [210, 3200]);
+    let factureDate = new Date()
+    facture.timestamp ? factureDate.setTime(facture.timestamp) :''
+    // doc.setFont('helvetica', 'bold');
+    const logo = await this.loadImage('/assets/images/logo1.png');
+    const drawDashedLine = (yPos: number,start?:number,end?:number) => {
+      yPos += 5;
+      const startX = start||10;
+      const endX = end||200; // You can adjust the line length here
+      const dashLength = 2; // Length of each dash
+      const gapLength = 1; // Gap between dashes
+      for (let i = startX; i < endX; i += dashLength + gapLength) {
+        doc.line(i, yPos, i + dashLength, yPos);
+      }
+      return yPos += 8
+    };
+    let font='Helvetica'    
+    let factureNumber = (51).toString() + "/" + factureDate.getFullYear().toString()
+    // doc.addImage(logo, 'PNG', 130, 10, 60, 30);
+    doc.setFont(font, 'bold');    
+  
+    doc.setFontSize(20);
+    doc.text(`Ticket/B.L N° ${factureNumber}`, 15, 20);
+    doc.text(`Date ${factureDate.toLocaleString('fr-FR')}`, 15, 30);
+    drawDashedLine(30)
+    doc.text('STE PROMOKA SHOP', 15, 45);
+    doc.text('ADRESSE : Rue 2 mars Akouda', 15, 55);
+    doc.text('MF : 185560Y/N/M000', 15, 65);
+    drawDashedLine(65)
+    doc.text('CLIENT : '+facture.client.nom, 15, 80);
+    doc.text('ADRESSE : '+facture.client.adresse, 15, 90);
+    doc.text('MF : '+facture.client.matricule, 15, 100);
+    let totalAmount = facture.products.reduce((total: any, product: any) => {
+      return total + (product.quantity * product.prixVente);
+    }, 0);
+    drawDashedLine(100)
+    let yPosition = 130;
+    doc.setFont(font, 'bold');
+    doc.text('Designation', 10, yPosition);
+    doc.text('Qté', 100, yPosition); // Adjusted x-position for Qté
+    doc.text('P.U HT', 120, yPosition); // Adjusted x-position for P.U HT
+    doc.text('Total', 160, yPosition); // Adjusted x-position for Total
+    drawDashedLine(yPosition);
+    yPosition=drawDashedLine(yPosition+1);
+    // Table body
+    doc.setFont(font, '');
+
+    facture.products.forEach((product:any) => {
+      doc.text(this.sliceProductName(product.nom), 10, yPosition);
+      doc.text(String(product.quantity), 100, yPosition);
+      doc.text(product.prixVente.toFixed(3), 120, yPosition);
+      doc.text((product.quantity * product.prixVente).toFixed(3), 160, yPosition);
+      yPosition=drawDashedLine(yPosition);
+    });
+
+    yPosition+=30
+    yPosition=drawDashedLine(yPosition)
+    doc.setFont(font, 'bold');
+
+    doc.text('Total HT:', 15, yPosition);
+    doc.text( totalAmount.toFixed(3), 50, yPosition);
+    yPosition=drawDashedLine(yPosition);
+
+    doc.text('TVA:', 15, yPosition);
+    doc.text('0.000', 50, yPosition); // Assuming VAT is zero for now
+    yPosition=drawDashedLine(yPosition);
+
+    doc.text('DT', 15, yPosition);
+    doc.text( this.droit.toFixed(3), 50, yPosition);
+    yPosition=drawDashedLine(yPosition);
+
+    doc.text('Total TTC:', 15, yPosition);
+    doc.text((totalAmount + this.droit).toFixed(3), 50, yPosition);
+    yPosition=drawDashedLine(yPosition);
+    doc.save(`Facture_${factureNumber}_${facture.client.id}.pdf`);
   }
 }

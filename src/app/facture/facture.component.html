@@ -149,7 +149,7 @@
                 <button (click)="generatePDF(facture)" class="btn btn-primary">
                   PDF
                 </button>
-                  <button (click)="printTicket(facture)" class="btn btn-secondary">
+                  <button (click)="generateTicket(facture)" class="btn btn-secondary">
                   Ticket
                 </button>
             </div>
@@ -300,8 +300,8 @@
   </div>
 
   <div class="details">
-    <p><strong>Client:</strong> {{ invoice.client.name }}</p>
-    <p><strong>Adresse:</strong> {{ invoice.client.address }}</p>
+    <p><strong>Client:</strong> {{ invoice.client.nom }}</p>
+    <p><strong>Adresse:</strong> {{ invoice.client.adresse }}</p>
     <p><strong>MF:</strong> {{ invoice.client.matricule }}</p>
   </div>
 

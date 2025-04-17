@@ -72,7 +72,7 @@
   }
 
   .save-btn {
-    background-color: #13144d;
+    background-color: var(--color1);
     color: white;
     padding: 12px 20px;
     cursor: pointer;
@@ -80,7 +80,7 @@
   }
 
   .save-btn:hover {
-    background-color: #13144d;
+    background-color: var(--color1);
   }
 
   .product-item {
@@ -97,7 +97,7 @@
     margin-right: 10px;
   }
    .fournisseur-details {
-    background-color: #f9f9f9;
+    background-color: var(--color4);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -206,7 +206,7 @@
   }
 
   .save-btn {
-    background-color: #13144d;
+    background-color: var(--color1);
   }
 
   .cancel-btn {

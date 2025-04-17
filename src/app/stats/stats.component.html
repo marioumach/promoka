@@ -1,0 +1,38 @@
+<div class="produit-container">
+    <h1>Rapport de vente</h1>
+  
+<div class="filter fxColumn">
+    <label>Start Date: <input type="date" [(ngModel)]="startDate"></label>
+    <label>End Date: <input type="date" [(ngModel)]="endDate"></label>
+    <label>Password: <input type="password" [(ngModel)]="password"></label>
+    <button (click)="unlockTable()">Etat de vente</button>
+  </div>
+  
+  <div *ngIf="showTable" class="filter">
+    <table border="1" cellpadding="5">
+      <thead>
+        <tr>
+          <th>Numero</th>
+          <th>Date</th>
+          <th>Client</th>
+          <th>T.Vente</th>
+          <th>T.Bénéfice</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let facture of filteredFactures">
+          <td>{{ facture.numero }}</td>
+          <td class="no-break">{{ facture.timestamp | date:'dd-MM' }}</td>
+          <td>{{ facture.client.nom |titlecase}}</td>
+          <td>{{ calculateTotalVente(facture)|number:'1.3-3' }}</td>
+          <td>{{ calculateTotalBenefice(facture)|number:'1.3-3' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div style="margin-top: 10px; font-weight: bold;" class="filter">
+      Total Vente: <span style="color: green;"> {{ totalVenteAll|number:'1.3-3'  }}</span> Dinars <br>
+      Total Bénéfice: <span style="color: orangered;">{{ totalBeneficeAll|number:'1.3-3' }}</span> Dinars
+    </div>
+  </div>
+  </div>

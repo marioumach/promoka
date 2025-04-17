@@ -1,5 +1,10 @@
 @import "../node_modules/ngx-spinner/animations/ball-spin";
-
+:root{
+    --color1 : #2B4593;
+    --color2 : #8dbf7c;
+    --color3 : #f2f3f8;
+    --color4 : #e6ede9;
+}
 .table-container {
     overflow-y: auto;
     /* Enable vertical scrolling */
@@ -13,7 +18,7 @@ html,
 body {
     width: 100%;
     height: 100%;
-
+    background-color: var(--color3);
     app-login {
         display: flex;
         justify-content: center;
@@ -41,7 +46,45 @@ body {
     display: flex;
     flex-direction: row;
 }
+.fxColumn{
+    display: flex;
+    flex-direction: column;
+}
 .fxAlignSpaceBetweenCenter{
     justify-content: space-between;
     align-items: center;
+}
+.fxAlignCenterCenter{
+    justify-content: center;
+    align-items: center;
+}
+.ngx-spinner-overlay > div:not(.loading-text) {
+    top: 35% !important;
+}
+input{
+    outline: none !important;
+}
+.material-symbols-outlined{
+    font-size: 1.5rem;
+}
+@media (max-width: 960px) {
+    .qty_controle,.material-symbols-outlined ,input , select , button , th  , td {
+        padding: 5px !important;
+        font-size: 0.75rem !important; 
+        line-height: 1 !important;
+    }
+    form {
+        gap: 5px !important;
+    }
+    .qty_controle{
+        width: 1.5rem !important;
+    }
+    .qty_field{
+        width: 2rem !important;
+        text-align: center;
+      }
+     .numero_field,.price_field{
+        width:4rem !important;
+        text-align: center;
+      }
 }

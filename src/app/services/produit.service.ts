@@ -63,7 +63,13 @@ export class ProduitService {
     const produitDoc = doc(this.db, 'produits', id);
     return await updateDoc(produitDoc, produit).finally(() => this.spinner.hide());
   }
-
+  // Récupérer les fournisseurs depuis Firestore
+  async getProducts(): Promise<any[]> {
+    const produitsCollection = collection(this.db, 'produits');
+    const produitSnapshot = await getDocs(produitsCollection).finally(() => this.spinner.hide());
+    const produitList = produitSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return produitList;
+  }
   getFilteredProduits(
     pageSize: number,
     lastDoc: QueryDocumentSnapshot<DocumentData> | null,

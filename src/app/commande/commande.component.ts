@@ -111,7 +111,10 @@ export class CommandeComponent {
     this.areAllSelected = isChecked;
     this.selectedCommand.products.forEach((product: any) => product.isSelected = isChecked);
   }
-
+  changeQuantity(product: any, change: number) {
+    const newQuantity = (product.quantity || 0) + change;
+    product.quantity = Math.max(1, newQuantity);
+    this.calculateTotalAmount()  }
   updateSelectionState(): void {
     this.areAllSelected = this.selectedCommand.products.every((product: any) => product.isSelected);
   }

@@ -89,7 +89,7 @@
     <input
       type="text"
       [(ngModel)]="filterName"
-      (keyup)="applyFilters()"
+      (keyup)="filterProduits()"
       placeholder="Nom du produit"
       class="input-field"
     />
@@ -98,7 +98,7 @@
     <select
       class="input-field"
       [(ngModel)]="filterFournisseur"
-      (change)="applyFilters()"
+      (change)="filterProduits()"
     >
       <option [value]="''">Fournisseur</option>
       <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id">
@@ -110,56 +110,68 @@
     <input
       type="text"
       [(ngModel)]="filterCodeBarre"
-      (keyup)="applyFilters()"
+      (keyup)="filterProduits()"
       placeholder="Code à barre"
       class="input-field"
     />
   </div>
 
   <!-- List of products -->
-  <div *ngIf="produits.length > 0">
+  <div *ngIf="produits.length > 0" class="filter">
     <h2>Liste des Produits</h2>
     <div class="table-container">
       <table class="product-table">
         <thead>
           <tr>
             <th>Libellé</th>
-            <th>Fournisseur</th>
-            <th>Code à barre</th>
-            <th>quantité</th>
-            <th>Prix Achat</th>
-            <th>Prix Vente</th>
+            <!-- <th>Code à barre</th> -->
+            <th>Qté</th>
+            <th>P.Achat</th>
+            <th>P.Vente</th>
             <th>Actions</th>
+            <th>Fournisseur</th>
+
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let produit of filteredProduits">
+          <tr *ngFor="let produit of paginatedProduits">
             <td class="no-break">{{ produit.nom_lowercase }}</td>
-            <td class="no-break">
-              {{ produit.fournisseur | fournisseur : fournisseurs }}
-            </td>
-            <td class="no-break">{{ produit.codeBarre }}</td>
+         
+            <!-- <td class="no-break">{{ produit.codeBarre }}</td> -->
             <td>{{ produit.quantite }}</td>
-            <td>{{ produit.prixAchat.toFixed(3) }}</td>
-            <td>{{ produit.prixVente.toFixed(3) }}</td>
+            <td>{{ (produit.prixAchat||0).toFixed(3) }}</td>
+            <td>{{ (produit.prixVente||0).toFixed(3) }}</td>
             <td class="actions">
               <!-- Delete and edit actions -->
-              <button class="action-btn" (click)="deleteProduit(produit.id)">
-                Supprimer
-              </button>
+    
               <button class="action-btn" (click)="editProduit(produit)">
-                Modifier
+                <span class="material-symbols-outlined" >edit</span>
               </button>
+                        <button class="action-btn" (click)="deleteProduit(produit.id)">
+                <span class="material-symbols-outlined" >delete</span>
+              </button>
+            </td>
+            <td class="no-break">
+              {{ produit.fournisseur | fournisseur : fournisseurs }}
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <button (click)="nextPage()" *ngIf="hasMoreData" [disabled]="!lastDoc">
-      Charger Plus
-    </button>
   </div>
-
+  <div class="pagination w-100" *ngIf="totalPages > 1">
+    <span></span>
+  <div>
+    <button (click)="prevPage()" [disabled]="currentPage === 0">Précedent</button>
+    <span>Page {{ currentPage + 1 }} Sur {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">Suivant</button></div>
+   <div>
+    <select [(ngModel)]="pageSize" (change)="changePageSize()">
+      <option value="5">5 par page</option>
+      <option value="10">10 par page</option>
+      <option value="25">25 par page</option>
+    </select></div>
+  </div>
   <!-- Update form for selected product -->
   <div *ngIf="selectedProduit" class="update-form" id="update-product">
     <h2>Modifier Produit</h2>

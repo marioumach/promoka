@@ -18,6 +18,7 @@ import { ToastComponent } from './toast/toast.component';
 import { FactureComponent } from './facture/facture.component';
 import { ClientComponent } from './client/client.component';
 import { TitleCasePipe } from '@angular/common';
+import { StatsComponent } from './stats/stats.component';
 
 export const environment = {
   production: false,
@@ -42,7 +43,8 @@ export const environment = {
     FournisseurPipe,
     ToastComponent,
     FactureComponent,
-    ClientComponent
+    ClientComponent,
+    StatsComponent
   ],
   imports: [
     BrowserModule,

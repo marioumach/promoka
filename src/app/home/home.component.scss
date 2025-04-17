@@ -5,7 +5,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background-color: #13144d;
+  background-color: var(--color1);
   color: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
@@ -42,7 +42,7 @@
   cursor: pointer;
 }
 .nav_link_active{
-  color: #53b558 !important;
+  color: var(--color2) !important;
   text-decoration: underline;
 }
 .content-container {
@@ -72,8 +72,11 @@ svg {
   fill: #ffa500;
 }
 /* Adjustments for responsive screens */
-@media (max-width: 768px) {
+@media (max-width: 960px) {
   /* Show menu toggle and adjust layout */
+  .content-container {
+    padding: 0px; 
+}
   .social-icons-resp {
     margin-left: 1rem;
     display: block;

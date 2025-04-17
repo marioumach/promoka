@@ -18,6 +18,7 @@ export class ProduitComponent {
   selectedProduit: any;
   updateData: any = {};
   filteredProduits: any[] = [];
+  paginatedProduits: any[] = [];
   pageSize = 10; // Taille de la page
   lastDoc: any = null; // Dernier document pour pagination
   hasMoreData: boolean = true; // Flag to track if more data is available
@@ -42,13 +43,14 @@ export class ProduitComponent {
     this.getProduits();
     this.getFournisseurs();
   }
-  async getProduits(last: any = null): Promise<void> {
+  async getProduits(): Promise<void> {
     try {
-      const { produits, lastDoc } = await this.produitService.getProduits(this.pageSize, last);
-      this.produits = [...this.produits, ...produits]; // Ajouter les nouveaux produits à la liste existante
+      this.produits = await this.produitService.getProducts();
       this.filteredProduits = [...this.produits]; // Mettre à jour les produits filtrés
-      this.lastDoc = lastDoc; // Mettre à jour le dernier document pour la pagination
-      this.hasMoreData = !!lastDoc;
+      this.changePageSize()
+      this.updatePaginatedData(); // Initialize pagination
+      this.calculatePages(); // If using custom paginator
+      this.hasMoreData = false;
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error);
     }
@@ -58,9 +60,7 @@ export class ProduitComponent {
       this.fournisseurs = data;
     });
   }
-  nextPage(): void {
-    this.filterName || this.filterFournisseur || this.filterCodeBarre ? this.applyFilters(this.lastDoc) : this.getProduits(this.lastDoc); // Charger la page suivante
-  }
+
   addProduit() {
     if (this.produitForm.valid) {
       this.newProduit = this.produitForm.value
@@ -137,20 +137,53 @@ export class ProduitComponent {
     }
   }
   filterProduits() {
+    const fournisseur = this.fournisseurs.find(f => f.id === this.filterFournisseur);
+    
     this.filteredProduits = this.produits.filter(produit => {
-      const fournisseur = this.fournisseurs.find(f => f.id === produit.fournisseur) as Fournisseur;
-
-      // Check if fournisseur exists and compare the filter with relevant fields
-      const isFournisseurMatch = this.filterFournisseur === '' ||
-        (fournisseur &&
-          (fournisseur.nom.toLowerCase().includes(this.filterFournisseur.toLowerCase()) ||
-            (fournisseur.telephone.toString().includes(this.filterFournisseur))));
-
-      return (
-        (this.filterName === '' || produit.nom.toLowerCase().includes(this.filterName.toLowerCase())) &&
-        isFournisseurMatch &&
-        (this.filterCodeBarre === '' || produit.codeBarre.includes(this.filterCodeBarre))
-      );
+      console.log(produit);
+      
+      const matchesName = this.filterName === '' || (produit.nom || '').toLowerCase().includes(this.filterName.toLowerCase());
+      const matchesFournisseur = !this.filterFournisseur || (fournisseur && (produit.fournisseur==fournisseur.id));
+      const matchesCodeBarre = this.filterCodeBarre === '' || (produit.codeBarre || '').includes(this.filterCodeBarre);
+  
+      return matchesName && matchesFournisseur && matchesCodeBarre;
     });
+ 
+    this.changePageSize()
+    this.updatePaginatedData(); // Initialize pagination
+    this.calculatePages(); // If using custom paginator
+  }
+  totalPages = 0;
+
+  currentPage = 0
+  calculatePages() {
+    this.totalPages = Math.ceil(this.filteredProduits.length / this.pageSize);
+  }
+
+  prevPage() {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.updatePaginatedData();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.updatePaginatedData();
+    }
+  }
+
+  changePageSize() {
+    this.currentPage = 0;
+    this.updatePaginatedData();
+  }
+
+  // Update your existing updatePaginatedData
+  updatePaginatedData() {
+    const startIndex = this.currentPage * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paginatedProduits = this.filteredProduits.slice(startIndex, endIndex);
+    this.calculatePages();
   }
 }

@@ -28,25 +28,28 @@
       <table>
         <thead>
           <tr>
-            <th>Nom</th>
-            <th>Prix d'achat</th>
-            <th>Prix Achat / Piece</th>
-            <th>Quantité</th>
+            <th>Libellé</th>
+            <th>P.Achat</th>
+            <th>P.Unité</th>
+            <th>Qté</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let product of filteredProduits">
             <td>{{ product.nom }}</td>
-            <td>{{ product.prixAchat.toFixed(3) }} </td>
-            <td>{{ (product.prixAchat / product.quantite).toFixed(3)}} </td>
+            <td>{{ product.prixAchat|number : '1.3-3'}} </td>
+            <td>{{ (product.prixAchat / product.quantite)|number : '1.3-3'}} </td>
             <td>
-              <input
-                type="number"
-                [(ngModel)]="product.quantity"
-                min="1"
-                placeholder="Quantité"
-              />
+              <div style="display: flex; align-items: center;gap:5px">
+                <button type="button" (click)="changeQuantity(product, -1)" class="qty_controle" >-</button>
+                <input 
+                 class="qty_field"                  type="number" 
+                  [(ngModel)]="product.quantity" 
+                  (change)="updateQuantity(product, product.quantity)" 
+                  [min]="1" />
+                <button type="button" (click)="changeQuantity(product, 1)" class="qty_controle">+</button>
+              </div>
             </td>
             <td>
               <button 
@@ -74,8 +77,8 @@
         <thead>
           <tr>
             <th>Nom</th>
-            <th>Quantité</th>
-            <th>Prix Total</th>
+            <th>Qté</th>
+            <th>P.Total</th>
             <th>Actions</th> <!-- Add an actions column for edit and delete buttons -->
           </tr>
         </thead>
@@ -85,15 +88,19 @@
             
             <!-- Editable quantity -->
             <td>
-              <input 
-                type="number" 
-                [(ngModel)]="product.quantity" 
-                (ngModelChange)="updateQuantity(product, product.quantity)" 
-                [min]="1" />
+              <div style="display: flex; align-items: center;gap:5px">
+                <button type="button" (click)="changeQuantity(product, -1)" class="qty_controle" >-</button>
+                <input 
+                 class="qty_field"                  type="number" 
+                  [(ngModel)]="product.quantity" 
+                  (change)="updateQuantity(product, product.quantity)" 
+                  [min]="1" />
+                <button type="button" (click)="changeQuantity(product, 1)" class="qty_controle">+</button>
+              </div>
             </td>
       
             <!-- Display total price -->
-            <td>{{ (product.quantity * product.prixAchat).toFixed(3) }}</td>
+            <td>{{ (product.quantity * product.prixAchat) |number : '1.3-3'}}</td>
       
             <!-- Action buttons -->
             <td>
@@ -104,9 +111,9 @@
         </tbody>
       </table>
       <div class="row justify-content-between">
-      <h3 class="col-4">Total à payer: <span class="total-amount">{{ totalAmount.toFixed(3) }} </span></h3>
-      <h3 class="col-4">Nombre Produits: <span class="total-amount">{{ totalProduit }} </span></h3>
-      <h3 class="col-4">Nombre de cartons: <span class="total-amount">{{ totalCarton }} </span></h3>
+      <div class="col-4">Total à payer: <span class="total-amount">{{ totalAmount |number : '1.3-3'}} </span></div>
+      <div class="col-4">Nombre Produits: <span class="total-amount">{{ totalProduit }} </span></div>
+      <div class="col-4">Nombre de cartons: <span class="total-amount">{{ totalCarton }} </span></div>
   </div>
       <!-- Bouton pour sauvegarder la commande -->
       <button class="save-btn" (click)="saveCommand()">Sauvegarder la Commande</button>
@@ -120,7 +127,7 @@
         <thead>
           <tr>
             <th>Fournisseur</th>
-            <th>Nombre Produits</th>
+            <th>N.P</th>
             <th>Total</th>
             <th>Actions</th>
           </tr>
@@ -129,10 +136,10 @@
           <tr *ngFor="let command of savedCommands">
             <td>{{ command.fournisseur.nom }}</td>
             <td>{{ command.products.length }}</td>
-            <td>{{ command.totalAmount.toFixed(3)  }} </td>
+            <td>{{ command.totalAmount|number : '1.3-3'  }} </td>
             <td>
               <div class="fxRow fxAlignSpaceBetweenCenter">
-              <button class="action-btn" (click)="viewDetails(command)">Mettre à jour</button>
+              <button class="action-btn" (click)="viewDetails(command)">Modifier</button>
               <button class=" delete-btn" (click)="deleteCommand(command.id)">Supprimer</button>
               <button (click)="generatePDF(command)" class="btn btn-primary">
                 PDF

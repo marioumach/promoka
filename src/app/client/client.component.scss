@@ -12,7 +12,7 @@
   
   /* Add Client Form */
   .add-Client, .update-form {
-    background-color: #f9f9f9;
+    background-color: var(--color4);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 30px;
@@ -60,7 +60,7 @@
   
   /* Filter Section */
   .filter {
-    background-color: #f9f9f9;
+    background-color: var(--color4);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 30px;
@@ -114,11 +114,11 @@
   }
   
   button:last-child {
-    background-color: #13144d;
+    background-color: var(--color1);
   }
   
   button:last-child:hover {
-    background-color: #13144d;
+    background-color: var(--color1);
   }
 
   

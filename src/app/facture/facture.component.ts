@@ -16,12 +16,15 @@ export class FactureComponent implements OnInit {
   selectedClient: any = null; // Client sélectionné
   produits: any[] = []; // Liste des produits
   filteredProduits: any[] = []; // Produits filtrés
+  paginatedProduits: any[] = []; // Produits filtrés
   selectedProducts: any[] = []; // Produits sélectionnés
   filterName = ''; // Filtre par nom de produit
   totalAmount = 0; // Montant total
   totalProduit = 0; // Nombre total de produits
   factureDate: string = new Date().toISOString().split('T')[0]; // Date actuelle (format YYYY-MM-DD)
+  factureNumber : any
   clients: any[] = []
+  year = new Date().getFullYear()
   onClientsSelected(e: any) {
     let id = e.target.value
     this.selectedClient = this.clients.find(f => (f.id) === (id));
@@ -42,10 +45,6 @@ export class FactureComponent implements OnInit {
     this.clientService.chargerClients().then(data => {
       this.clients = data;
     });
-  }
-
-  nextPage(): void {
-    this.filterName ? this.getProduits() : this.applyFilters(); // Charger la page suivante
   }
   // Add a product to the facture list
   addProductTofacture(product: any, quantity: number) {
@@ -78,24 +77,30 @@ export class FactureComponent implements OnInit {
   }
   async getProduits(): Promise<void> {
     try {
-      const { produits, lastDoc } = await this.produitService.getProduits(this.pageSize, this.lastDoc);
-      this.produits = [...produits]; // Ajouter les nouveaux produits à la liste existante
+      this.produits = await this.produitService.getProducts();
       this.filteredProduits = [...this.produits]; // Mettre à jour les produits filtrés
-      this.lastDoc = lastDoc; // Mettre à jour le dernier document pour la pagination
-      console.log(produits, lastDoc);
-      this.hasMoreData = !!lastDoc;
+      this.hasMoreData = false; 
+      this.changePageSize()
+      this.updatePaginatedData(); // Initialize pagination
+      this.calculatePages(); // If using custom paginator
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error);
     }
   }
 
-
+  changeQuantity(product: any, change: number) {
+    const newQuantity = (product.quantity || 0) + change;
+    product.quantity = Math.max(1, newQuantity);
+    this.calculateTotalAmount()  }
   // Filtrer les produits par nom
   filterProduits(): void {
     const filter = this.filterName.toLowerCase();
     this.filteredProduits = this.produits.filter((product) =>
       product.nom.toLowerCase().includes(filter)
     );
+    this.changePageSize()
+    this.updatePaginatedData(); // Initialize pagination
+    this.calculatePages(); // If using custom paginator
   }
 
   // Vérifier si un produit est déjà dans la liste sélectionnée
@@ -116,7 +121,7 @@ export class FactureComponent implements OnInit {
 
   // Mettre à jour la quantité d'un produit
   updateQuantity(product: any, quantity: number): void {
-    product.quantity = quantity;
+  
     this.calculateTotals();
   }
   calculateTotalAmount() {
@@ -139,6 +144,7 @@ export class FactureComponent implements OnInit {
       (sum, product) => sum + product.quantity * product.prixTotal,
       0
     );
+    
     this.totalProduit = this.selectedProducts.length
   }
 
@@ -149,10 +155,11 @@ export class FactureComponent implements OnInit {
       client: this.selectedClient,
       products: this.selectedProducts,
       totalAmount: this.totalAmount,
-      timestamp : new Date(this.factureDate).getTime()
+      timestamp : new Date(this.factureDate).getTime(),
+      numero : this.factureNumber
     };
     this.factureService.savefacture(command).then(response => {
-      this.toastService.showToast('Commande sauvegardée avec succès!', 'success');
+      this.toastService.showToast('Facture sauvegardée avec succès!', 'success');
       this.loadAllfactures(); 
       this.selectedClient = null
       this.selectedProducts = []
@@ -170,7 +177,19 @@ export class FactureComponent implements OnInit {
   savedfactures: any[] = []
   loadAllfactures() {
     this.factureService.getAllfactures().then(factures => {
-      this.savedfactures = factures;
+      this.savedfactures = factures.sort((a, b) => {
+        const dateA = new Date(a.timestamp).getTime();
+        const dateB = new Date(b.timestamp).getTime();
+  
+        if (dateB !== dateA) {
+          return dateB - dateA;  
+        }
+          const numeroA = parseInt((a.numero || '0').split('/')[0], 10);
+        const numeroB = parseInt((b.numero || '0').split('/')[0], 10);
+        return numeroB - numeroA; 
+      });
+  
+      this.factureNumber = (factures.length + 1) + '/' + this.year;
     });
   }
   selectedfacture: any = null;
@@ -200,6 +219,11 @@ export class FactureComponent implements OnInit {
       }
     );
   }
+  editedProductId : any
+  editPrice = false
+  updatePrixVente(product: any, newPrix: number) {
+    product.prixVente = parseFloat(newPrix.toFixed(3));
+    this.calculateTotalAmount()   }
   updateTotalAmount() {
     let totalAmount = 0;
     this.selectedfacture.products.forEach((product: any) => {
@@ -279,13 +303,13 @@ export class FactureComponent implements OnInit {
       img.onerror = (error) => reject(error);
     });
   }
-  async generatePDF(facture: any) {
+  async generatePDF(facture: any ,i:any) {
     const doc = new jsPDF('p', 'mm', 'a4', true);
     let factureDate = new Date()
     facture.timestamp ? factureDate.setTime(facture.timestamp) :''
     doc.setFont('helvetica', 'bold');
     const logo = await this.loadImage('/assets/images/logo1.png');
-    let factureNumber = (51).toString() + "/" + factureDate.getFullYear().toString()
+    let factureNumber = facture.numero || (i+1)+'/'+this.year
     doc.addImage(logo, 'PNG', 15, 10, 60, 30);
 
     doc.setFontSize(11);
@@ -449,7 +473,7 @@ export class FactureComponent implements OnInit {
     }
     return name;
   }
-  async generateTicket(facture: any) {
+  async generateTicket(facture: any , i:any) {
     const doc =  new jsPDF('p', 'mm', [210, 3200]);
     let factureDate = new Date()
     facture.timestamp ? factureDate.setTime(facture.timestamp) :''
@@ -467,8 +491,7 @@ export class FactureComponent implements OnInit {
       return yPos += 8
     };
     let font='Helvetica'    
-    let factureNumber = (51).toString() + "/" + factureDate.getFullYear().toString()
-    // doc.addImage(logo, 'PNG', 130, 10, 60, 30);
+    let factureNumber = facture.numero || (i+1)+'/'+this.year    // doc.addImage(logo, 'PNG', 130, 10, 60, 30);
     doc.setFont(font, 'bold');    
   
     doc.setFontSize(20);
@@ -505,25 +528,46 @@ export class FactureComponent implements OnInit {
       yPosition=drawDashedLine(yPosition);
     });
 
-    yPosition+=30
+    yPosition+=10
     yPosition=drawDashedLine(yPosition)
     doc.setFont(font, 'bold');
 
-    doc.text('Total HT:', 15, yPosition);
-    doc.text( totalAmount.toFixed(3), 50, yPosition);
-    yPosition=drawDashedLine(yPosition);
-
-    doc.text('TVA:', 15, yPosition);
-    doc.text('0.000', 50, yPosition); // Assuming VAT is zero for now
-    yPosition=drawDashedLine(yPosition);
-
-    doc.text('DT', 15, yPosition);
-    doc.text( this.droit.toFixed(3), 50, yPosition);
-    yPosition=drawDashedLine(yPosition);
-
     doc.text('Total TTC:', 15, yPosition);
-    doc.text((totalAmount + this.droit).toFixed(3), 50, yPosition);
+    doc.text((totalAmount ).toFixed(3), 50, yPosition);
     yPosition=drawDashedLine(yPosition);
     doc.save(`Facture_${factureNumber}_${facture.client.id}.pdf`);
+  }
+  totalPages = 0;
+
+  currentPage = 0
+  calculatePages() {
+    this.totalPages = Math.ceil(this.filteredProduits.length / this.pageSize);
+  }
+
+  prevPage() {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.updatePaginatedData();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.updatePaginatedData();
+    }
+  }
+
+  changePageSize() {
+    this.currentPage = 0;
+    this.updatePaginatedData();
+  }
+
+  // Update your existing updatePaginatedData
+  updatePaginatedData() {
+    const startIndex = this.currentPage * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paginatedProduits = this.filteredProduits.slice(startIndex, endIndex);
+    this.calculatePages();
   }
 }

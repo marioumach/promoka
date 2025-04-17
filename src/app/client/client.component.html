@@ -67,7 +67,7 @@
     </div>
   
     <!-- Liste des Clients -->
-    <div *ngIf="Clients.length > 0">
+    <div *ngIf="Clients.length > 0" class="filter">
         <h2>Liste des Clients</h2>
         <div class="table-container">
         <table>
@@ -86,10 +86,10 @@
                     <td>{{ Client.matricule }}</td>
                     <td>{{ Client.adresse }}</td>
                     <td>{{ Client.telephone }}</td>
-                    <td>
+                    <td class="fxRow">
                         <!-- Actions pour supprimer et modifier -->
-                        <button (click)="deleteClient(Client.id!)">Supprimer</button>
-                        <button (click)="editClient(Client)">Modifier</button>
+                        <button (click)="deleteClient(Client.id!)"><span class="material-symbols-outlined" >delete</span></button>
+                        <button (click)="editClient(Client)"><span class="material-symbols-outlined" >edit</span></button>
                     </td>
                 </tr>
             </tbody>
